@@ -1,0 +1,2 @@
+# ChoiSeoYeon-assignment
+🍎🍏🥕
