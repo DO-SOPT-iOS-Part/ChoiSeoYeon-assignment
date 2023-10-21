@@ -47,8 +47,10 @@ final class ViewController: UIViewController {
         textField.placeholder = "도시 또는 공항 검색"
         textField.font = UIFont(name: "SFProText-Medium", size: 19)
         textField.layer.cornerRadius = 10
+        textField.backgroundColor = .systemBackground
         textField.attributedPlaceholder = NSAttributedString(string: "도시 또는 공항 검색", attributes: [NSAttributedString.Key.foregroundColor: UIColor.lightGray])
         textField.textColor = .lightText
+        textField.setLeftPaddingPoints(58)
         return textField
     }()
     
@@ -75,8 +77,6 @@ final class ViewController: UIViewController {
                                      contentView.trailingAnchor.constraint(equalTo: scrollView.contentLayoutGuide.trailingAnchor),
                                      contentView.heightAnchor.constraint(equalToConstant: 2000)])
         
-        
-        
         contentView.widthAnchor.constraint(equalTo: scrollView.widthAnchor).isActive = true
         let contentViewHeight = contentView.heightAnchor.constraint(greaterThanOrEqualTo: self.view.heightAnchor)
         contentViewHeight.priority = .defaultLow
@@ -97,6 +97,14 @@ final class ViewController: UIViewController {
                                      searchTextField.leadingAnchor.constraint(equalTo: self.contentView.leadingAnchor, constant: 20),
                                      searchTextField.widthAnchor.constraint(equalToConstant: 335),
                                      searchTextField.heightAnchor.constraint(equalToConstant: 40)])
+    }
+}
+
+extension UITextField {
+    func setLeftPaddingPoints(_ amount: CGFloat) {
+        let paddingView = UIView(frame: CGRect(x: 0, y: 0, width: amount, height: self.frame.size.height))
+        self.leftView = paddingView
+        self.leftViewMode = .always
     }
 }
 
