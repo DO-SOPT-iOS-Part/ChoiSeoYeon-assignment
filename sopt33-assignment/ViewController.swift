@@ -42,16 +42,18 @@ final class ViewController: UIViewController {
         return label
     }()
     
-    private var searchTextField: UITextField = {
-        let textField = UITextField()
-        textField.font = UIFont(name: "SFProText-Medium", size: 19)
-        textField.layer.cornerRadius = 10
-        textField.backgroundColor = .systemBackground
-        textField.attributedPlaceholder = NSAttributedString(
-            string: "도시 또는 공항 검색", attributes: [NSAttributedString.Key.foregroundColor: UIColor.lightGray])
-        textField.textColor = .lightText
-        textField.setLeftPaddingPoints(58)
-        return textField
+    private var searchBar: UISearchBar = {
+        let bar = UISearchBar()
+        // 서치바의 배경이 흰색이 되는 현상 해결
+        bar.setBackgroundImage(UIImage(), for: .any, barMetrics: .default)
+        bar.backgroundColor = .clear
+        bar.barTintColor = UIColor(white: 1, alpha: 0.1)
+        bar.placeholder = "도시 또는 공항 검색"
+        bar.searchTextField.tintColor = UIColor(white: 1, alpha: 0.5)
+        bar.searchTextField.font = UIFont(name: "SFProText-Regular", size: 19)
+        bar.searchTextField.textColor = .white
+        bar.setImage(UIImage(named: "finder"), for: .search, state: .normal)
+        return bar
     }()
     
     private var weatherCardView: UIView = {
@@ -139,7 +141,7 @@ final class ViewController: UIViewController {
         contentViewHeight.priority = .defaultLow
         contentViewHeight.isActive = true
         
-        [optionImageView, titleLabel, searchTextField].forEach{
+        [optionImageView, titleLabel, searchBar].forEach{
             $0.translatesAutoresizingMaskIntoConstraints = false
             contentView.addSubview($0)
         }
@@ -150,10 +152,10 @@ final class ViewController: UIViewController {
         NSLayoutConstraint.activate([titleLabel.topAnchor.constraint(equalTo: self.contentView.topAnchor, constant: 97),
                                      titleLabel.leadingAnchor.constraint(equalTo: self.contentView.leadingAnchor, constant: 20)])
         
-        NSLayoutConstraint.activate([searchTextField.topAnchor.constraint(equalTo: self.contentView.topAnchor, constant: 149),
-                                     searchTextField.leadingAnchor.constraint(equalTo: self.contentView.leadingAnchor, constant: 20),
-                                     searchTextField.widthAnchor.constraint(equalToConstant: 335),
-                                     searchTextField.heightAnchor.constraint(equalToConstant: 40)])
+        NSLayoutConstraint.activate([searchBar.topAnchor.constraint(equalTo: self.contentView.topAnchor, constant: 149),
+                                     searchBar.leadingAnchor.constraint(equalTo: self.contentView.leadingAnchor, constant: 20),
+                                     searchBar.widthAnchor.constraint(equalToConstant: 335),
+                                     searchBar.heightAnchor.constraint(equalToConstant: 40)])
         
         weatherCardView.translatesAutoresizingMaskIntoConstraints = false
         contentView.addSubview(weatherCardView)
