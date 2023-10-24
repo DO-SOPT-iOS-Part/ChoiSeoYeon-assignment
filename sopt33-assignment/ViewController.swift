@@ -163,11 +163,6 @@ final class ViewController: UIViewController {
         NSLayoutConstraint.activate([weatherCardView.topAnchor.constraint(equalTo: self.contentView.topAnchor, constant: 204),
                                      weatherCardView.leadingAnchor.constraint(equalTo: self.contentView.leadingAnchor, constant: 20)])
     }
-//
-//    private func weatherListPush(sender: UITapGestureRecognizer) {
-//        let detailVC = WeatherDetailViewController()
-//        self.navigationController?.pushViewController(detailVC, animated: true)
-//    }
 }
 
 extension UITextField {
@@ -178,17 +173,4 @@ extension UITextField {
     }
 }
 
-//extension ViewController {
-//    private func setGestureRecognizer() {
-//        let tapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(cardViewTapped))
-//                weatherCardView.addGestureRecognizer(tapGestureRecognizer)
-//                weatherCardView.isUserInteractionEnabled = true
-//    }
-//    
-//    @objc private func cardViewTapped(_ tapRecognizer: UITapGestureRecognizer) {
-//            let detailVC = WeatherDetailViewController()
-//        detailVC.modalPresentationStyle = .overFullScreen
-//            self.present(detailVC, animated: false, completion: nil)
-//        }
-//}
 

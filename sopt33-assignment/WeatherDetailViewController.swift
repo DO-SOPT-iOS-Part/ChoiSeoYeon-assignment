@@ -9,6 +9,20 @@ import UIKit
 
 final class WeatherDetailViewController: UIViewController{
     
+    private var scrollView: UIScrollView = {
+        let view = UIScrollView()
+        view.backgroundColor = .clear
+        view.contentInsetAdjustmentBehavior = .never
+        view.showsVerticalScrollIndicator = false
+        return view
+    }()
+    
+    private var contentView: UIView = {
+        let view = UIView()
+        view.backgroundColor = .clear
+        return view
+    }()
+    
     private var backgroundImageView: UIImageView = {
         let backgroundImage = UIImage(named: "background")
         let backgroundImageView = UIImageView(image: backgroundImage)
@@ -141,6 +155,13 @@ final class WeatherDetailViewController: UIViewController{
         return imageView
     }()
     
+    private var weatherScrollView: UIScrollView = {
+        let view = UIScrollView()
+        view.isPagingEnabled = true
+        view.showsHorizontalScrollIndicator = false
+        return view
+    }()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         self.setBackground()
@@ -149,11 +170,29 @@ final class WeatherDetailViewController: UIViewController{
     private func setBackground() {
         backgroundImageView.translatesAutoresizingMaskIntoConstraints = false
         self.view.addSubview(backgroundImageView)
-        
         NSLayoutConstraint.activate([backgroundImageView.topAnchor.constraint(equalTo: self.view.topAnchor),
                                      backgroundImageView.leadingAnchor.constraint(equalTo: self.view.leadingAnchor),
                                      backgroundImageView.trailingAnchor.constraint(equalTo: self.view.trailingAnchor),
                                      backgroundImageView.bottomAnchor.constraint(equalTo: self.view.bottomAnchor)])
+        
+        scrollView.translatesAutoresizingMaskIntoConstraints = false
+        contentView.translatesAutoresizingMaskIntoConstraints = false
+        
+        self.view.addSubview(scrollView)
+        scrollView.addSubview(contentView)
+        
+        NSLayoutConstraint.activate([scrollView.topAnchor.constraint(equalTo: self.view.topAnchor),
+                                     scrollView.bottomAnchor.constraint(equalTo: self.view.bottomAnchor),
+                                     scrollView.leadingAnchor.constraint(equalTo: self.view.leadingAnchor),
+                                     scrollView.trailingAnchor.constraint(equalTo: self.view.trailingAnchor)])
+        
+        NSLayoutConstraint.activate([contentView.topAnchor.constraint(equalTo: scrollView.contentLayoutGuide.topAnchor),
+                                     contentView.bottomAnchor.constraint(equalTo: scrollView.contentLayoutGuide.bottomAnchor),
+                                     contentView.leadingAnchor.constraint(equalTo: scrollView.contentLayoutGuide.leadingAnchor),
+                                     contentView.trailingAnchor.constraint(equalTo: scrollView.contentLayoutGuide.trailingAnchor),
+                                     contentView.heightAnchor.constraint(equalToConstant: 1000)])
+        
+        contentView.widthAnchor.constraint(equalTo: scrollView.widthAnchor).isActive = true
         
         self.setLayout()
     }
@@ -161,55 +200,55 @@ final class WeatherDetailViewController: UIViewController{
     private func setLayout() {
         [locationLabel, currentTemperatureLabel, currentWeatherLabel, highLowTemperatureLabel].forEach{
             $0.translatesAutoresizingMaskIntoConstraints = false
-            backgroundImageView.addSubview($0)
+            contentView.addSubview($0)
         }
         
-        NSLayoutConstraint.activate([locationLabel.topAnchor.constraint(equalTo: backgroundImageView.topAnchor, constant: 78),
-                                     locationLabel.centerXAnchor.constraint(equalTo: backgroundImageView.centerXAnchor)])
+        NSLayoutConstraint.activate([locationLabel.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 78),
+                                     locationLabel.centerXAnchor.constraint(equalTo: contentView.centerXAnchor)])
         NSLayoutConstraint.activate([currentTemperatureLabel.topAnchor.constraint(equalTo: locationLabel.topAnchor, constant: 42),
-                                     currentTemperatureLabel.centerXAnchor.constraint(equalTo: backgroundImageView.centerXAnchor, constant: -0.5)])
+                                     currentTemperatureLabel.centerXAnchor.constraint(equalTo: contentView.centerXAnchor, constant: -0.5)])
         NSLayoutConstraint.activate([currentWeatherLabel.topAnchor.constraint(equalTo: locationLabel.topAnchor, constant: 154),
-                                     currentWeatherLabel.centerXAnchor.constraint(equalTo: backgroundImageView.centerXAnchor)])
+                                     currentWeatherLabel.centerXAnchor.constraint(equalTo: contentView.centerXAnchor)])
         NSLayoutConstraint.activate([highLowTemperatureLabel.topAnchor.constraint(equalTo: locationLabel.topAnchor, constant: 188),
-                                     highLowTemperatureLabel.centerXAnchor.constraint(equalTo: backgroundImageView.centerXAnchor)])
+                                     highLowTemperatureLabel.centerXAnchor.constraint(equalTo: contentView.centerXAnchor)])
         
         [roundedRectangle, lineInRectangle].forEach {
             $0.translatesAutoresizingMaskIntoConstraints = false
-            backgroundImageView.addSubview($0)
+            contentView.addSubview($0)
         }
         
-        NSLayoutConstraint.activate([roundedRectangle.topAnchor.constraint(equalTo: backgroundImageView.topAnchor, constant: 334),
-                                     roundedRectangle.leadingAnchor.constraint(equalTo: backgroundImageView.leadingAnchor, constant: 20),
+        NSLayoutConstraint.activate([roundedRectangle.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 334),
+                                     roundedRectangle.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 20),
                                      roundedRectangle.widthAnchor.constraint(equalToConstant: 335),
                                      roundedRectangle.heightAnchor.constraint(equalToConstant: 212)])
-        NSLayoutConstraint.activate([lineInRectangle.topAnchor.constraint(equalTo: backgroundImageView.topAnchor, constant: 400),
-                                     lineInRectangle.leadingAnchor.constraint(equalTo: backgroundImageView.leadingAnchor, constant: 34)])
+        NSLayoutConstraint.activate([lineInRectangle.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 400),
+                                     lineInRectangle.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 34)])
         
         [descriptionLabel].forEach {
             $0.translatesAutoresizingMaskIntoConstraints = false
-            backgroundImageView.addSubview($0)
+            contentView.addSubview($0)
         }
         
         NSLayoutConstraint.activate([descriptionLabel.topAnchor.constraint(equalTo: roundedRectangle.topAnchor, constant: 10),
-                                     descriptionLabel.leadingAnchor.constraint(equalTo: backgroundImageView.leadingAnchor, constant: 35),
+                                     descriptionLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 35),
                                      descriptionLabel.widthAnchor.constraint(equalToConstant: 305),
                                      descriptionLabel.heightAnchor.constraint(equalToConstant: 45)])
         
         [navigationLine, mapImageView, listImageView, pointerImageView, dotImageView].forEach {
             $0.translatesAutoresizingMaskIntoConstraints = false
-            backgroundImageView.addSubview($0)
+            contentView.addSubview($0)
         }
         
-        NSLayoutConstraint.activate([navigationLine.topAnchor.constraint(equalTo: backgroundImageView.topAnchor, constant: 730),
-                                     navigationLine.leadingAnchor.constraint(equalTo: backgroundImageView.leadingAnchor),
+        NSLayoutConstraint.activate([navigationLine.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 730),
+                                     navigationLine.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
                                      navigationLine.widthAnchor.constraint(equalToConstant: 375)])
-        NSLayoutConstraint.activate([mapImageView.topAnchor.constraint(equalTo: backgroundImageView.topAnchor, constant: 734),
-                                     mapImageView.leadingAnchor.constraint(equalTo: backgroundImageView.leadingAnchor, constant: 10)])
-        NSLayoutConstraint.activate([listImageView.topAnchor.constraint(equalTo: backgroundImageView.topAnchor, constant: 734),
-                                     listImageView.leadingAnchor.constraint(equalTo: backgroundImageView.leadingAnchor, constant: 322)])
-        NSLayoutConstraint.activate([pointerImageView.topAnchor.constraint(equalTo: backgroundImageView.topAnchor, constant: 734),
-                                     pointerImageView.leadingAnchor.constraint(equalTo: backgroundImageView.leadingAnchor, constant: 161)])
-        NSLayoutConstraint.activate([dotImageView.topAnchor.constraint(equalTo: backgroundImageView.topAnchor, constant: 734),
-                                     dotImageView.leadingAnchor.constraint(equalTo: backgroundImageView.leadingAnchor, constant: 189)])
+        NSLayoutConstraint.activate([mapImageView.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 734),
+                                     mapImageView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 10)])
+        NSLayoutConstraint.activate([listImageView.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 734),
+                                     listImageView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 322)])
+        NSLayoutConstraint.activate([pointerImageView.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 734),
+                                     pointerImageView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 161)])
+        NSLayoutConstraint.activate([dotImageView.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 734),
+                                     dotImageView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 189)])
     }
 }
