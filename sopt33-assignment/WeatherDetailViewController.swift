@@ -77,6 +77,7 @@ final class WeatherDetailViewController: UIViewController{
         let view = UIView()
         view.frame = CGRect(x: 0, y: 0, width: 320, height: 0)
         view.alpha = 0.5
+        
         let stroke = UIView()
         stroke.bounds = view.bounds.insetBy(dx: -0.1, dy: -0.1)
         stroke.center = view.center
@@ -136,13 +137,15 @@ final class WeatherDetailViewController: UIViewController{
     }()
     
     private var mapImageView: UIImageView = {
-       let imageView = UIImageView(image: UIImage(named: "map"))
+        let imageView = UIImageView(image: UIImage(named: "map"))
         return imageView
     }()
     
-    private var listImageView: UIImageView = {
-        let imageView = UIImageView(image: UIImage(named: "list"))
-        return imageView
+    private var listButton: UIButton = {
+        let button = UIButton()
+        button.setImage(UIImage(named: "list"), for: .normal)
+        button.addTarget(self, action: #selector(popButton), for: .touchUpInside)
+        return button
     }()
     
     private var pointerImageView: UIImageView = {
@@ -155,16 +158,30 @@ final class WeatherDetailViewController: UIViewController{
         return imageView
     }()
     
-    private var weatherScrollView: UIScrollView = {
+    private var weatherHorizontalScrollView: UIScrollView = {
         let view = UIScrollView()
-        view.isPagingEnabled = true
         view.showsHorizontalScrollIndicator = false
+        view.backgroundColor = .clear
+        return view
+    }()
+    
+    private var weatherStackView: UIStackView = {
+        let view = UIStackView()
+        view.axis = .horizontal
+        view.distribution = .fillEqually
+        view.spacing = 30
         return view
     }()
     
     override func viewDidLoad() {
         super.viewDidLoad()
         self.setBackground()
+        
+        listButton.addTarget(self, action: #selector(popButton), for: .touchUpInside)
+    }
+    
+    @objc func popButton() {
+        self.navigationController?.popViewController(animated: true)
     }
     
     private func setBackground() {
@@ -224,7 +241,7 @@ final class WeatherDetailViewController: UIViewController{
         NSLayoutConstraint.activate([lineInRectangle.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 400),
                                      lineInRectangle.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 34)])
         
-        [descriptionLabel].forEach {
+        [descriptionLabel, weatherHorizontalScrollView].forEach {
             $0.translatesAutoresizingMaskIntoConstraints = false
             contentView.addSubview($0)
         }
@@ -233,8 +250,26 @@ final class WeatherDetailViewController: UIViewController{
                                      descriptionLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 35),
                                      descriptionLabel.widthAnchor.constraint(equalToConstant: 305),
                                      descriptionLabel.heightAnchor.constraint(equalToConstant: 45)])
+        NSLayoutConstraint.activate([weatherHorizontalScrollView.topAnchor.constraint(equalTo: lineInRectangle.topAnchor, constant: 14),
+                                     weatherHorizontalScrollView.leadingAnchor.constraint(equalTo: roundedRectangle.leadingAnchor)])
         
-        [navigationLine, mapImageView, listImageView, pointerImageView, dotImageView].forEach {
+        weatherStackView.translatesAutoresizingMaskIntoConstraints = false
+        weatherHorizontalScrollView.addSubview(weatherStackView)
+        
+        NSLayoutConstraint.activate([weatherStackView.topAnchor.constraint(equalTo: weatherHorizontalScrollView.topAnchor),
+                                     weatherStackView.leadingAnchor.constraint(equalTo: weatherHorizontalScrollView.leadingAnchor),
+                                     weatherStackView.trailingAnchor.constraint(equalTo: weatherHorizontalScrollView.trailingAnchor),
+                                     weatherStackView.widthAnchor.constraint(equalToConstant: 1000),
+                                     weatherStackView.heightAnchor.constraint(equalTo: weatherHorizontalScrollView.heightAnchor)])
+        
+        [weatherStackItem()].forEach {
+            NSLayoutConstraint.activate([$0.widthAnchor.constraint(equalToConstant: 44),
+                                         $0.heightAnchor.constraint(equalToConstant: 94)])
+            $0.translatesAutoresizingMaskIntoConstraints = false
+            weatherStackView.addArrangedSubview($0)
+        }
+        
+        [navigationLine, mapImageView, listButton, pointerImageView, dotImageView].forEach {
             $0.translatesAutoresizingMaskIntoConstraints = false
             contentView.addSubview($0)
         }
@@ -244,8 +279,8 @@ final class WeatherDetailViewController: UIViewController{
                                      navigationLine.widthAnchor.constraint(equalToConstant: 375)])
         NSLayoutConstraint.activate([mapImageView.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 734),
                                      mapImageView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 10)])
-        NSLayoutConstraint.activate([listImageView.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 734),
-                                     listImageView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 322)])
+        NSLayoutConstraint.activate([listButton.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 734),
+                                     listButton.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 322)])
         NSLayoutConstraint.activate([pointerImageView.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 734),
                                      pointerImageView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 161)])
         NSLayoutConstraint.activate([dotImageView.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 734),

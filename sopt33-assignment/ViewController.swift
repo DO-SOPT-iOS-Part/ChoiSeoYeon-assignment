@@ -56,11 +56,11 @@ final class ViewController: UIViewController {
         return bar
     }()
     
-    private var weatherCardView: UIView = {
-        let cardView = UIView()
-        let weatherListImageView = UIImageView(image: UIImage(named: "weatherlist"))
-        weatherListImageView.frame = CGRect(x: 0, y: 0, width: 335, height: 117)
-        cardView.addSubview(weatherListImageView)
+    private var weatherCardView: UIButton = {
+        let cardView = UIButton()
+
+        cardView.frame = CGRect(x: 0, y: 0, width: 335, height: 117)
+        cardView.setImage(UIImage(named: "weatherlist"), for: .normal)
         
         var myLocationLabel = UILabel()
         myLocationLabel.text = "나의 위치"
@@ -94,21 +94,23 @@ final class ViewController: UIViewController {
 
         [myLocationLabel, myLocateLabel, myweatherLabel, currentTemperature, todayHighTemperatureLabel, todayLowTemperatureLabel].forEach{
             $0.translatesAutoresizingMaskIntoConstraints = false
-            weatherListImageView.addSubview($0)
+            cardView.addSubview($0)
         }
         
-        NSLayoutConstraint.activate([myLocationLabel.topAnchor.constraint(equalTo: weatherListImageView.topAnchor, constant: 10),
-                                     myLocationLabel.leadingAnchor.constraint(equalTo: weatherListImageView.leadingAnchor, constant: 16)])
-        NSLayoutConstraint.activate([myLocateLabel.topAnchor.constraint(equalTo: weatherListImageView.topAnchor, constant: 44),
-                                     myLocateLabel.leadingAnchor.constraint(equalTo: weatherListImageView.leadingAnchor, constant: 16)])
-        NSLayoutConstraint.activate([myweatherLabel.topAnchor.constraint(equalTo: weatherListImageView.topAnchor, constant: 87),
-                                     myweatherLabel.leadingAnchor.constraint(equalTo: weatherListImageView.leadingAnchor, constant: 16)])
-        NSLayoutConstraint.activate([currentTemperature.topAnchor.constraint(equalTo: weatherListImageView.topAnchor, constant: 4),
-                                     currentTemperature.leadingAnchor.constraint(equalTo: weatherListImageView.leadingAnchor, constant: 249)])
-        NSLayoutConstraint.activate([todayHighTemperatureLabel.topAnchor.constraint(equalTo: weatherListImageView.topAnchor, constant: 87),
+        NSLayoutConstraint.activate([myLocationLabel.topAnchor.constraint(equalTo: cardView.topAnchor, constant: 10),
+                                     myLocationLabel.leadingAnchor.constraint(equalTo: cardView.leadingAnchor, constant: 16)])
+        NSLayoutConstraint.activate([myLocateLabel.topAnchor.constraint(equalTo: cardView.topAnchor, constant: 44),
+                                     myLocateLabel.leadingAnchor.constraint(equalTo: cardView.leadingAnchor, constant: 16)])
+        NSLayoutConstraint.activate([myweatherLabel.topAnchor.constraint(equalTo: cardView.topAnchor, constant: 87),
+                                     myweatherLabel.leadingAnchor.constraint(equalTo: cardView.leadingAnchor, constant: 16)])
+        NSLayoutConstraint.activate([currentTemperature.topAnchor.constraint(equalTo: cardView.topAnchor, constant: 4),
+                                     currentTemperature.leadingAnchor.constraint(equalTo: cardView.leadingAnchor, constant: 249)])
+        NSLayoutConstraint.activate([todayHighTemperatureLabel.topAnchor.constraint(equalTo: cardView.topAnchor, constant: 87),
                                      todayHighTemperatureLabel.leadingAnchor.constraint(equalTo: myweatherLabel.leadingAnchor, constant: 180)])
-        NSLayoutConstraint.activate([todayLowTemperatureLabel.topAnchor.constraint(equalTo: weatherListImageView.topAnchor, constant: 87),
+        NSLayoutConstraint.activate([todayLowTemperatureLabel.topAnchor.constraint(equalTo: cardView.topAnchor, constant: 87),
                                      todayLowTemperatureLabel.leadingAnchor.constraint(equalTo: todayHighTemperatureLabel.leadingAnchor, constant: 66)])
+        
+        cardView.addTarget(self, action: #selector(cardViewTapped), for: .touchUpInside)
         
         return cardView
     }()
@@ -116,6 +118,11 @@ final class ViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         self.setLayout()
+    }
+    
+    @objc func cardViewTapped() {
+        let detailVC = WeatherDetailViewController()
+        self.navigationController?.pushViewController(detailVC, animated: true)
     }
     
     private func setLayout() {
@@ -165,12 +172,5 @@ final class ViewController: UIViewController {
     }
 }
 
-extension UITextField {
-    func setLeftPaddingPoints(_ amount: CGFloat) {
-        let paddingView = UIView(frame: CGRect(x: 0, y: 0, width: amount, height: self.frame.size.height))
-        self.leftView = paddingView
-        self.leftViewMode = .always
-    }
-}
 
 
