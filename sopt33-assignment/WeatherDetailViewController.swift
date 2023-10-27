@@ -65,7 +65,6 @@ final class WeatherDetailViewController: UIViewController{
     private var roundedRectangle: UIView = {
         let view = UIView()
         view.frame = CGRect(x: 0, y: 0, width: 335, height: 212)
-        view.alpha = 0.2
         view.layer.backgroundColor = UIColor(red: 1, green: 1, blue: 1, alpha: 0.03).cgColor
         view.layer.cornerRadius = 15
         view.layer.borderWidth = 0.5
@@ -105,25 +104,16 @@ final class WeatherDetailViewController: UIViewController{
     
     private var navigationLine: UIView = {
         var view = UIView()
-        view.frame = CGRect(x: 0, y: 0, width: 375, height: 0)
-        view.alpha = 0.3
+        view.frame = CGRect(x: 0, y: 0, width: UIScreen.main.bounds.width, height: 0)
+        view.alpha = 0.5
         
-        var shadows = UIView()
-        shadows.frame = view.frame
-        shadows.clipsToBounds = false
-        view.addSubview(shadows)
-        
-        let shadowPath0 = UIBezierPath(roundedRect: shadows.bounds, cornerRadius: 0)
-        
-        let layer0 = CALayer()
-        layer0.shadowPath = shadowPath0.cgPath
-        layer0.shadowColor = UIColor(red: 1, green: 1, blue: 1, alpha: 0.4).cgColor
-        layer0.shadowOpacity = 1
-        layer0.shadowRadius = 2
-        layer0.shadowOffset = CGSize(width: 0, height: 0)
-        layer0.bounds = shadows.bounds
-        layer0.position = shadows.center
-        shadows.layer.addSublayer(layer0)
+        let stroke = UIView()
+        stroke.bounds = view.bounds.insetBy(dx: -0.1, dy: -0.1)
+        stroke.center = view.center
+        view.addSubview(stroke)
+        view.bounds = view.bounds.insetBy(dx: -0.1, dy: -0.1)
+        stroke.layer.borderWidth = 0.2
+        stroke.layer.borderColor = UIColor(red: 1, green: 1, blue: 1, alpha: 1).cgColor
         
         return view
     }()
@@ -162,6 +152,7 @@ final class WeatherDetailViewController: UIViewController{
         view.axis = .horizontal
         view.distribution = .fillEqually
         view.spacing = 22
+        view.backgroundColor = .clear
         return view
     }()
     
@@ -222,34 +213,36 @@ final class WeatherDetailViewController: UIViewController{
         NSLayoutConstraint.activate([highLowTemperatureLabel.topAnchor.constraint(equalTo: locationLabel.topAnchor, constant: 188),
                                      highLowTemperatureLabel.centerXAnchor.constraint(equalTo: contentView.centerXAnchor)])
         
-        [roundedRectangle, lineInRectangle].forEach {
+        [roundedRectangle].forEach {
             $0.translatesAutoresizingMaskIntoConstraints = false
             contentView.addSubview($0)
         }
         
         NSLayoutConstraint.activate([roundedRectangle.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 334),
                                      roundedRectangle.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 20),
+                                     roundedRectangle.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -20),
                                      roundedRectangle.widthAnchor.constraint(equalToConstant: 335),
                                      roundedRectangle.heightAnchor.constraint(equalToConstant: 212)])
-        NSLayoutConstraint.activate([lineInRectangle.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 400),
-                                     lineInRectangle.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 34)])
         
-        [descriptionLabel].forEach {
+        [descriptionLabel, lineInRectangle, weatherHorizontalScrollView].forEach {
             $0.translatesAutoresizingMaskIntoConstraints = false
-            contentView.addSubview($0)
+            roundedRectangle.addSubview($0)
         }
         
-        weatherHorizontalScrollView.translatesAutoresizingMaskIntoConstraints = false
-        roundedRectangle.addSubview(weatherHorizontalScrollView)
-        
         NSLayoutConstraint.activate([descriptionLabel.topAnchor.constraint(equalTo: roundedRectangle.topAnchor, constant: 10),
-                                     descriptionLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 35),
+                                     descriptionLabel.leadingAnchor.constraint(equalTo: roundedRectangle.leadingAnchor, constant: 15),
+                                     descriptionLabel.trailingAnchor.constraint(equalTo: roundedRectangle.trailingAnchor, constant: -15),
                                      descriptionLabel.widthAnchor.constraint(equalToConstant: 305),
                                      descriptionLabel.heightAnchor.constraint(equalToConstant: 45)])
         
-        NSLayoutConstraint.activate([weatherHorizontalScrollView.topAnchor.constraint(equalTo: lineInRectangle.topAnchor, constant: 14),
-                                     weatherHorizontalScrollView.leadingAnchor.constraint(equalTo: roundedRectangle.leadingAnchor),
-                                     weatherHorizontalScrollView.heightAnchor.constraint(equalToConstant: 94),
+        NSLayoutConstraint.activate([lineInRectangle.topAnchor.constraint(equalTo: roundedRectangle.topAnchor, constant: 66),
+                                     lineInRectangle.leadingAnchor.constraint(equalTo: roundedRectangle.leadingAnchor, constant: 14),
+                                     lineInRectangle.trailingAnchor.constraint(equalTo: roundedRectangle.trailingAnchor, constant: -14),
+                                     lineInRectangle.bottomAnchor.constraint(equalTo: roundedRectangle.bottomAnchor, constant: -146)])
+        
+        NSLayoutConstraint.activate([weatherHorizontalScrollView.topAnchor.constraint(equalTo: roundedRectangle.topAnchor, constant: 80),
+                                     weatherHorizontalScrollView.leadingAnchor.constraint(equalTo: roundedRectangle.leadingAnchor, constant: 10),
+                                     weatherHorizontalScrollView.trailingAnchor.constraint(equalTo: roundedRectangle.trailingAnchor, constant: -10),
                                      weatherHorizontalScrollView.bottomAnchor.constraint(equalTo: roundedRectangle.bottomAnchor, constant: -10)])
         
         weatherStackView.translatesAutoresizingMaskIntoConstraints = false
@@ -258,27 +251,30 @@ final class WeatherDetailViewController: UIViewController{
         NSLayoutConstraint.activate([weatherStackView.topAnchor.constraint(equalTo: weatherHorizontalScrollView.contentLayoutGuide.topAnchor),
                                      weatherStackView.leadingAnchor.constraint(equalTo: weatherHorizontalScrollView.contentLayoutGuide.leadingAnchor),
                                      weatherStackView.trailingAnchor.constraint(equalTo: weatherHorizontalScrollView.contentLayoutGuide.trailingAnchor),
-                                     weatherStackView.bottomAnchor.constraint(equalTo: weatherHorizontalScrollView.contentLayoutGuide.bottomAnchor)])
+                                     weatherStackView.bottomAnchor.constraint(equalTo: weatherHorizontalScrollView.contentLayoutGuide.bottomAnchor),
+                                     weatherStackView.widthAnchor.constraint(equalToConstant: 650)])
         
-        let stackViewWidth = weatherStackView.widthAnchor.constraint(greaterThanOrEqualTo: weatherHorizontalScrollView.widthAnchor)
-        stackViewWidth.priority = .defaultLow
-        stackViewWidth.isActive = true
+        //        let stackViewWidth = weatherStackView.widthAnchor.constraint(greaterThanOrEqualTo: weatherHorizontalScrollView.widthAnchor)
+        //        stackViewWidth.priority = .defaultLow
+        //        stackViewWidth.isActive = true
         
         [navigationLine, mapImageView, listButton, pointerImageView, dotImageView].forEach {
             $0.translatesAutoresizingMaskIntoConstraints = false
             contentView.addSubview($0)
         }
         
-        NSLayoutConstraint.activate([navigationLine.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 730),
+        NSLayoutConstraint.activate([navigationLine.bottomAnchor.constraint(equalTo: contentView.topAnchor, constant: UIScreen.main.bounds.height-82),
                                      navigationLine.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
-                                     navigationLine.widthAnchor.constraint(equalToConstant: 375)])
-        NSLayoutConstraint.activate([mapImageView.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 734),
+                                     navigationLine.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
+                                     navigationLine.widthAnchor.constraint(equalToConstant: 375),
+                                     navigationLine.heightAnchor.constraint(equalToConstant: 0)])
+        NSLayoutConstraint.activate([mapImageView.bottomAnchor.constraint(equalTo: contentView.topAnchor, constant: UIScreen.main.bounds.height-34),
                                      mapImageView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 10)])
-        NSLayoutConstraint.activate([listButton.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 734),
+        NSLayoutConstraint.activate([listButton.bottomAnchor.constraint(equalTo: contentView.topAnchor, constant: UIScreen.main.bounds.height-34),
                                      listButton.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 322)])
-        NSLayoutConstraint.activate([pointerImageView.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 734),
+        NSLayoutConstraint.activate([pointerImageView.bottomAnchor.constraint(equalTo: contentView.topAnchor, constant: UIScreen.main.bounds.height-24),
                                      pointerImageView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 161)])
-        NSLayoutConstraint.activate([dotImageView.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 734),
+        NSLayoutConstraint.activate([dotImageView.bottomAnchor.constraint(equalTo: contentView.topAnchor, constant: UIScreen.main.bounds.height-24),
                                      dotImageView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 189)])
     }
 }
@@ -300,8 +296,7 @@ extension WeatherDetailViewController {
             item.translatesAutoresizingMaskIntoConstraints = false
             weatherStackView.addArrangedSubview(item)
             
-            NSLayoutConstraint.activate([item.widthAnchor.constraint(equalToConstant: 44),
-                                         item.heightAnchor.constraint(equalToConstant: 122)])
+            NSLayoutConstraint.activate([item.widthAnchor.constraint(equalToConstant: 44)])
         }
     }
 }
