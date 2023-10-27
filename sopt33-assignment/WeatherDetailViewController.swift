@@ -125,14 +125,6 @@ final class WeatherDetailViewController: UIViewController{
         layer0.position = shadows.center
         shadows.layer.addSublayer(layer0)
         
-        var stroke = UIView()
-        stroke.bounds = view.bounds.insetBy(dx: -0.2, dy: -0.2)
-        stroke.center = view.center
-        view.addSubview(stroke)
-        view.bounds = view.bounds.insetBy(dx: -0.2, dy: -0.2)
-        stroke.layer.borderWidth = 0.4
-        stroke.layer.borderColor = UIColor(red: 1, green: 1, blue: 1, alpha: 1).cgColor
-        
         return view
     }()
     
@@ -169,15 +161,16 @@ final class WeatherDetailViewController: UIViewController{
         let view = UIStackView()
         view.axis = .horizontal
         view.distribution = .fillEqually
-        view.spacing = 30
+        view.spacing = 22
         return view
     }()
     
     override func viewDidLoad() {
         super.viewDidLoad()
         self.setBackground()
+        self.setStackItem()
         
-        listButton.addTarget(self, action: #selector(popButton), for: .touchUpInside)
+        self.navigationItem.setHidesBackButton(true, animated: true)
     }
     
     @objc func popButton() {
@@ -241,33 +234,35 @@ final class WeatherDetailViewController: UIViewController{
         NSLayoutConstraint.activate([lineInRectangle.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 400),
                                      lineInRectangle.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 34)])
         
-        [descriptionLabel, weatherHorizontalScrollView].forEach {
+        [descriptionLabel].forEach {
             $0.translatesAutoresizingMaskIntoConstraints = false
             contentView.addSubview($0)
         }
+        
+        weatherHorizontalScrollView.translatesAutoresizingMaskIntoConstraints = false
+        roundedRectangle.addSubview(weatherHorizontalScrollView)
         
         NSLayoutConstraint.activate([descriptionLabel.topAnchor.constraint(equalTo: roundedRectangle.topAnchor, constant: 10),
                                      descriptionLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 35),
                                      descriptionLabel.widthAnchor.constraint(equalToConstant: 305),
                                      descriptionLabel.heightAnchor.constraint(equalToConstant: 45)])
+        
         NSLayoutConstraint.activate([weatherHorizontalScrollView.topAnchor.constraint(equalTo: lineInRectangle.topAnchor, constant: 14),
-                                     weatherHorizontalScrollView.leadingAnchor.constraint(equalTo: roundedRectangle.leadingAnchor)])
+                                     weatherHorizontalScrollView.leadingAnchor.constraint(equalTo: roundedRectangle.leadingAnchor),
+                                     weatherHorizontalScrollView.heightAnchor.constraint(equalToConstant: 94),
+                                     weatherHorizontalScrollView.bottomAnchor.constraint(equalTo: roundedRectangle.bottomAnchor, constant: -10)])
         
         weatherStackView.translatesAutoresizingMaskIntoConstraints = false
         weatherHorizontalScrollView.addSubview(weatherStackView)
         
-        NSLayoutConstraint.activate([weatherStackView.topAnchor.constraint(equalTo: weatherHorizontalScrollView.topAnchor),
-                                     weatherStackView.leadingAnchor.constraint(equalTo: weatherHorizontalScrollView.leadingAnchor),
-                                     weatherStackView.trailingAnchor.constraint(equalTo: weatherHorizontalScrollView.trailingAnchor),
-                                     weatherStackView.widthAnchor.constraint(equalToConstant: 1000),
-                                     weatherStackView.heightAnchor.constraint(equalTo: weatherHorizontalScrollView.heightAnchor)])
+        NSLayoutConstraint.activate([weatherStackView.topAnchor.constraint(equalTo: weatherHorizontalScrollView.contentLayoutGuide.topAnchor),
+                                     weatherStackView.leadingAnchor.constraint(equalTo: weatherHorizontalScrollView.contentLayoutGuide.leadingAnchor),
+                                     weatherStackView.trailingAnchor.constraint(equalTo: weatherHorizontalScrollView.contentLayoutGuide.trailingAnchor),
+                                     weatherStackView.bottomAnchor.constraint(equalTo: weatherHorizontalScrollView.contentLayoutGuide.bottomAnchor)])
         
-        [weatherStackItem()].forEach {
-            NSLayoutConstraint.activate([$0.widthAnchor.constraint(equalToConstant: 44),
-                                         $0.heightAnchor.constraint(equalToConstant: 94)])
-            $0.translatesAutoresizingMaskIntoConstraints = false
-            weatherStackView.addArrangedSubview($0)
-        }
+        let stackViewWidth = weatherStackView.widthAnchor.constraint(greaterThanOrEqualTo: weatherHorizontalScrollView.widthAnchor)
+        stackViewWidth.priority = .defaultLow
+        stackViewWidth.isActive = true
         
         [navigationLine, mapImageView, listButton, pointerImageView, dotImageView].forEach {
             $0.translatesAutoresizingMaskIntoConstraints = false
@@ -285,5 +280,28 @@ final class WeatherDetailViewController: UIViewController{
                                      pointerImageView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 161)])
         NSLayoutConstraint.activate([dotImageView.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 734),
                                      dotImageView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 189)])
+    }
+}
+extension WeatherDetailViewController {
+    private func setStackItem() {
+        let stackItemArray = [weatherStackItem(time: "Now", imageName: "cloudy", temperature: "21°"),
+                              weatherStackItem(time: "10시", imageName: "rainyandsunny", temperature: "21°"),
+                              weatherStackItem(time: "11시", imageName: "heavyrainy", temperature: "19°"),
+                              weatherStackItem(time: "12시", imageName: "rainy", temperature: "19°"),
+                              weatherStackItem(time: "13시", imageName: "thunder", temperature: "18°"),
+                              weatherStackItem(time: "14시", imageName: "cloudy", temperature: "18°"),
+                              weatherStackItem(time: "15시", imageName: "rainyandsunny", temperature: "67°"),
+                              weatherStackItem(time: "16시", imageName: "heavyrainy", temperature: "88°"),
+                              weatherStackItem(time: "17시", imageName: "rainy", temperature: "11°"),
+                              weatherStackItem(time: "18시", imageName: "thunder", temperature: "12°"),
+                              weatherStackItem(time: "19시", imageName: "rainyandsunny", temperature: "13°")]
+        
+        for item in stackItemArray {
+            item.translatesAutoresizingMaskIntoConstraints = false
+            weatherStackView.addArrangedSubview(item)
+            
+            NSLayoutConstraint.activate([item.widthAnchor.constraint(equalToConstant: 44),
+                                         item.heightAnchor.constraint(equalToConstant: 122)])
+        }
     }
 }
