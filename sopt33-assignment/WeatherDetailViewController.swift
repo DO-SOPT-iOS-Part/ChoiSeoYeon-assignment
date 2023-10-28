@@ -254,10 +254,6 @@ final class WeatherDetailViewController: UIViewController{
                                      weatherStackView.bottomAnchor.constraint(equalTo: weatherHorizontalScrollView.contentLayoutGuide.bottomAnchor),
                                      weatherStackView.widthAnchor.constraint(equalToConstant: 650)])
         
-        //        let stackViewWidth = weatherStackView.widthAnchor.constraint(greaterThanOrEqualTo: weatherHorizontalScrollView.widthAnchor)
-        //        stackViewWidth.priority = .defaultLow
-        //        stackViewWidth.isActive = true
-        
         [navigationLine, mapImageView, listButton, pointerImageView, dotImageView].forEach {
             $0.translatesAutoresizingMaskIntoConstraints = false
             contentView.addSubview($0)

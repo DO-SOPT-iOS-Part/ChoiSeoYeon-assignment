@@ -1,5 +1,5 @@
 //
-//  ViewController.swift
+//  WeatherListViewController.swift
 //  sopt33-assignment
 //
 //  Created by 최서연 on 10/19/23.
@@ -14,7 +14,7 @@
 
 import UIKit
 
-final class ViewController: UIViewController {
+final class WeatherListViewController: UIViewController {
     
     private var scrollView: UIScrollView = {
         let view = UIScrollView()
@@ -58,7 +58,7 @@ final class ViewController: UIViewController {
     
     private var weatherCardView: UIButton = {
         let cardView = UIButton()
-
+        
         cardView.frame = CGRect(x: 0, y: 0, width: 335, height: 117)
         cardView.setImage(UIImage(named: "weatherlist"), for: .normal)
         
@@ -91,7 +91,7 @@ final class ViewController: UIViewController {
         todayLowTemperatureLabel.text = "최저:15°"
         todayLowTemperatureLabel.font = UIFont(name: "SFProText-Medium", size: 15)
         todayLowTemperatureLabel.textColor = .white
-
+        
         [myLocationLabel, myLocateLabel, myweatherLabel, currentTemperature, todayHighTemperatureLabel, todayLowTemperatureLabel].forEach{
             $0.translatesAutoresizingMaskIntoConstraints = false
             cardView.addSubview($0)
