@@ -11,36 +11,26 @@ import Then
 
 final class WeatherListViewController: UIViewController {
     
-    private let scrollView = UIScrollView().then {
-        $0.backgroundColor = .black
-        $0.contentInsetAdjustmentBehavior = .never
-    }
-    
-    private let contentView = UIView().then {
-        $0.backgroundColor = .black
-    }
-    
     private let tableView = UITableView(frame: .zero, style: .plain).then {
-        $0.backgroundColor = .red
+        $0.backgroundColor = .black
+        $0.rowHeight = 117
     }
-    
-    private var weatherCardView = UIButton()
     
     override func viewDidLoad() {
         super.viewDidLoad()
         self.setNavigationBar()
         self.setLayout()
+        self.setTableViewConfig()
     }
     
     private func setNavigationBar() {
-        let largeTitleAttributes: [NSAttributedString.Key: Any] = [
-            .font: UIFont(name: "SFProText-Bold", size: 36)!,
-            .foregroundColor: UIColor.white
-        ]
         self.navigationItem.title = "날씨"
         self.navigationController?.navigationBar.prefersLargeTitles = true
         self.navigationController?.navigationBar.titleTextAttributes = [.foregroundColor: UIColor.white]
-        self.navigationController?.navigationBar.largeTitleTextAttributes = largeTitleAttributes
+        self.navigationController?.navigationBar.largeTitleTextAttributes = [
+            .font: UIFont(name: "SFProText-Bold", size: 36)!,
+            .foregroundColor: UIColor.white
+        ]
         
         self.navigationItem.rightBarButtonItem = UIBarButtonItem(image: UIImage(named: "options"), style: .plain, target: nil, action: nil)
         self.navigationItem.rightBarButtonItem?.tintColor = .white
@@ -56,102 +46,34 @@ final class WeatherListViewController: UIViewController {
     }
     
     private func setLayout() {
-        self.view.addSubview(scrollView)
-        scrollView.addSubview(contentView)
-        
-        scrollView.snp.makeConstraints {
+        self.view.addSubview(tableView)
+        tableView.snp.makeConstraints {
             $0.edges.equalToSuperview()
         }
-        contentView.snp.makeConstraints {
-            $0.leading.trailing.top.bottom.equalToSuperview()
-            $0.width.equalTo(scrollView.snp.width)
-            $0.height.equalTo(1000)
-        }
-        
-        weatherCardView = createWeatherCardView()
-        
-        contentView.addSubview(weatherCardView)
-        
-        weatherCardView.snp.makeConstraints {
-            $0.top.equalToSuperview().inset(204)
-            $0.leading.equalToSuperview().inset(20)
-        }
+    }
+    
+    private func setTableViewConfig() {
+        self.tableView.register(WeatherCardTableViewCell.self,
+                                forCellReuseIdentifier: WeatherCardTableViewCell.identifier)
+        self.tableView.delegate = self
+        self.tableView.dataSource = self
     }
 }
 
-extension WeatherListViewController {
-    
-    func createWeatherCardView() -> UIButton {
-        let cardView = UIButton().then {
-            $0.setImage(UIImage(named: "weatherlist"), for: .normal)
-        }
-        let myLocationLabel = UILabel().then {
-            $0.text = "나의 위치"
-            $0.font = UIFont(name: "SFProText-Bold", size: 24)
-            $0.textColor = .white
-        }
-        let myLocateLabel = UILabel().then {
-            $0.text = "서울특별시"
-            $0.font = UIFont(name: "SFProText-Medium", size: 17)
-            $0.textColor = .white
-        }
-        let myweatherLabel = UILabel().then {
-            $0.text = "흐림"
-            $0.font = UIFont(name: "SFProText-Medium", size: 16)
-            $0.textColor = .white
-        }
-        let currentTemperature = UILabel().then {
-            $0.text = "21°"
-            $0.font = UIFont(name: "SFProText-Light", size: 52)
-            $0.textColor = .white
-        }
-        let todayHighTemperatureLabel = UILabel().then {
-            $0.text = "최고:29°"
-            $0.font = UIFont(name: "SFProText-Medium", size: 15)
-            $0.textColor = .white
-        }
-        let todayLowTemperatureLabel = UILabel().then {
-            $0.text = "최저:15°"
-            $0.font = UIFont(name: "SFProText-Medium", size: 15)
-            $0.textColor = .white
-        }
-        
-        [myLocationLabel, myLocateLabel, myweatherLabel, currentTemperature, todayHighTemperatureLabel, todayLowTemperatureLabel].forEach{
-            cardView.addSubview($0)
-        }
-        
-        myLocationLabel.snp.makeConstraints {
-            $0.top.equalToSuperview().inset(10)
-            $0.leading.equalToSuperview().inset(16)
-        }
-        myLocateLabel.snp.makeConstraints {
-            $0.top.equalToSuperview().inset(44)
-            $0.leading.equalToSuperview().inset(16)
-        }
-        myweatherLabel.snp.makeConstraints {
-            $0.top.equalToSuperview().inset(87)
-            $0.leading.equalToSuperview().inset(16)
-        }
-        currentTemperature.snp.makeConstraints {
-            $0.top.equalToSuperview().inset(4)
-            $0.leading.equalToSuperview().inset(249)
-        }
-        todayHighTemperatureLabel.snp.makeConstraints {
-            $0.top.equalToSuperview().inset(87)
-            $0.leading.equalTo(myweatherLabel.snp.trailing).offset(150)
-        }
-        todayLowTemperatureLabel.snp.makeConstraints {
-            $0.top.equalToSuperview().inset(87)
-            $0.leading.equalTo(myweatherLabel.snp.trailing).offset(216)
-        }
-        
-        cardView.addTarget(self, action: #selector(cardTapped), for: .touchUpInside)
-        
-        return cardView
+extension WeatherListViewController: UITableViewDelegate {}
+extension WeatherListViewController: UITableViewDataSource {
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return weatherList.count
     }
     
-    @objc func cardTapped() {
-        let detailVC = WeatherDetailViewController()
-        self.navigationController?.pushViewController(detailVC, animated: true)
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        guard let cell = tableView.dequeueReusableCell(withIdentifier: WeatherCardTableViewCell.identifier,
+                                                       for: indexPath) as? WeatherCardTableViewCell else {return UITableViewCell()}
+        cell.bindData(data: weatherList[indexPath.row])
+        return cell
+        
     }
 }
+
+
+
