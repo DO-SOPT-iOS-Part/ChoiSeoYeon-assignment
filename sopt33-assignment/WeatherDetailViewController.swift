@@ -68,7 +68,7 @@ final class WeatherDetailViewController: UIViewController{
         $0.numberOfLines = 0
         $0.lineBreakMode = .byWordWrapping
     }
-    private let navigationLine = UIView().then {
+    private let bottomLine = UIView().then {
         $0.frame = CGRect(x: 0, y: 0, width: UIScreen.main.bounds.width, height: 0)
         $0.alpha = 0.5
         
@@ -79,6 +79,9 @@ final class WeatherDetailViewController: UIViewController{
         stroke.layer.borderWidth = 0.2
         stroke.layer.borderColor = UIColor(red: 1, green: 1, blue: 1, alpha: 1).cgColor
         $0.addSubview(stroke)
+    }
+    private let bottomTabbarBox = UIView().then {
+        $0.backgroundColor = .clear
     }
     private let mapImageView = UIImageView(image: UIImage(named: "map"))
     private let pointerImageView = UIImageView(image: UIImage(named: "pointer"))
@@ -174,34 +177,42 @@ final class WeatherDetailViewController: UIViewController{
             $0.top.equalToSuperview().inset(80)
             $0.leading.trailing.bottom.equalToSuperview().inset(10)
         }
-        
         weatherHorizontalScrollView.addSubview(weatherStackView)
         weatherStackView.snp.makeConstraints{
             $0.edges.equalToSuperview()
             $0.width.equalTo(650)
         }
-        
-        [navigationLine, mapImageView, listButton, pointerImageView, dotImageView].forEach {
+
+        [bottomLine, bottomTabbarBox].forEach {
             contentView.addSubview($0)
         }
-        navigationLine.snp.makeConstraints {
-            $0.bottom.equalTo(contentView.snp.top).inset(UIScreen.main.bounds.height-82)
+        bottomLine.snp.makeConstraints {
+            $0.bottom.equalTo(bottomTabbarBox.snp.top)
+            $0.leading.equalToSuperview()
+        }
+        bottomTabbarBox.snp.makeConstraints {
+            $0.bottom.equalTo(self.view)
             $0.leading.trailing.equalToSuperview()
+            $0.height.equalTo(82)
+        }
+        
+        [mapImageView, listButton, pointerImageView, dotImageView].forEach {
+            bottomTabbarBox.addSubview($0)
         }
         mapImageView.snp.makeConstraints {
-            $0.bottom.equalTo(contentView.snp.top).inset(UIScreen.main.bounds.height-34)
+            $0.bottom.equalToSuperview().inset(34)
             $0.leading.equalToSuperview().inset(10)
         }
         listButton.snp.makeConstraints {
-            $0.bottom.equalTo(contentView.snp.top).inset(UIScreen.main.bounds.height-34)
+            $0.bottom.equalToSuperview().inset(34)
             $0.leading.equalToSuperview().inset(322)
         }
         pointerImageView.snp.makeConstraints {
-            $0.bottom.equalTo(contentView.snp.top).inset(UIScreen.main.bounds.height-44)
+            $0.bottom.equalToSuperview().inset(44)
             $0.leading.equalToSuperview().inset(161)
         }
         dotImageView.snp.makeConstraints {
-            $0.bottom.equalTo(contentView.snp.top).inset(UIScreen.main.bounds.height-44)
+            $0.bottom.equalToSuperview().inset(44)
             $0.leading.equalToSuperview().inset(189)
         }
     }
