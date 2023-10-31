@@ -9,156 +9,99 @@ import UIKit
 
 final class WeatherDetailViewController: UIViewController{
     
-    private var scrollView: UIScrollView = {
-        let view = UIScrollView()
-        view.backgroundColor = .clear
-        view.contentInsetAdjustmentBehavior = .never
-        view.showsVerticalScrollIndicator = false
-        return view
-    }()
-    
-    private var contentView: UIView = {
-        let view = UIView()
-        view.backgroundColor = .clear
-        return view
-    }()
-    
-    private var backgroundImageView: UIImageView = {
-        let backgroundImage = UIImage(named: "background")
-        let backgroundImageView = UIImageView(image: backgroundImage)
-        backgroundImageView.contentMode = .scaleAspectFill
-        return backgroundImageView
-    }()
-    
-    private var locationLabel: UILabel = {
-        let label = UILabel()
-        label.text = "의정부시"
-        label.font = UIFont(name: "SFProText-Regular", size: 36)
-        label.textColor = .white
-        return label
-    }()
-    
-    private var currentTemperatureLabel: UILabel = {
-        let label = UILabel()
-        label.text = "21°"
-        label.font = UIFont(name: "SFProText-Thin", size: 102)
-        label.textColor = .white
-        return label
-    }()
-    
-    private var currentWeatherLabel: UILabel = {
-        let label = UILabel()
-        label.text = "흐림"
-        label.font = UIFont(name: "SFProText-Regular", size: 24)
-        label.textColor = UIColor(red: 1, green: 1, blue: 1, alpha: 1)
-        return label
-    }()
-    
-    private var highLowTemperatureLabel: UILabel = {
-        let label = UILabel()
-        label.text = "최고:29° 최저:15°"
-        label.font = UIFont(name: "SFProDisplay-Medium", size: 20)
-        label.textColor = UIColor(red: 1, green: 1, blue: 1, alpha: 1)
-        return label
-    }()
-    
-    private var roundedRectangle: UIView = {
-        let view = UIView()
-        view.frame = CGRect(x: 0, y: 0, width: 335, height: 212)
-        view.layer.backgroundColor = UIColor(red: 1, green: 1, blue: 1, alpha: 0.03).cgColor
-        view.layer.cornerRadius = 15
-        view.layer.borderWidth = 0.5
-        view.layer.borderColor = UIColor(red: 1, green: 1, blue: 1, alpha: 0.25).cgColor
-        return view
-    }()
-    
-    private var lineInRectangle: UIView = {
-        let view = UIView()
-        view.frame = CGRect(x: 0, y: 0, width: 320, height: 0)
-        view.alpha = 0.5
+    private let scrollView = UIScrollView().then {
+        $0.backgroundColor = .clear
+        $0.contentInsetAdjustmentBehavior = .never
+        $0.showsVerticalScrollIndicator = false
+    }
+    private let contentView = UIView().then {
+        $0.backgroundColor = .clear
+    }
+    private let backgroundImageView = UIImageView().then {
+        $0.image = UIImage(named: "background")
+        $0.contentMode = .scaleAspectFill
+    }
+    private let locationLabel = UILabel().then {
+        $0.text = "서울특별시"
+        $0.font = UIFont(name: "SFProText-Regular", size: 36)
+        $0.textColor = .white
+    }
+    private let currentTemperatureLabel = UILabel().then {
+        $0.text = "21°"
+        $0.font = UIFont(name: "SFProText-Thin", size: 102)
+        $0.textColor = .white
+    }
+    private let currentWeatherLabel = UILabel().then {
+        $0.text = "흐림"
+        $0.font = UIFont(name: "SFProText-Regular", size: 24)
+        $0.textColor = .white
+    }
+    private let highLowTemperatureLabel = UILabel().then {
+        $0.text = "최고:29° 최저:15°"
+        $0.font = UIFont(name: "SFProDisplay-Medium", size: 20)
+        $0.textColor = .white
+    }
+    private let roundedRectangle = UIView().then {
+        $0.frame = CGRect(x: 0, y: 0, width: 335, height: 212)
+        $0.layer.backgroundColor = UIColor(white: 1, alpha: 0.03).cgColor
+        $0.layer.cornerRadius = 15
+        $0.layer.borderWidth = 0.5
+        $0.layer.borderColor = UIColor(white: 1, alpha: 0.25).cgColor
+    }
+    private let lineInRectangle = UIView().then {
+        $0.frame = CGRect(x: 0, y: 0, width: 320, height: 0)
+        $0.alpha = 0.5
         
         let stroke = UIView()
-        stroke.bounds = view.bounds.insetBy(dx: -0.1, dy: -0.1)
-        stroke.center = view.center
-        view.addSubview(stroke)
-        view.bounds = view.bounds.insetBy(dx: -0.1, dy: -0.1)
+        stroke.bounds = $0.bounds.insetBy(dx: -0.1, dy: -0.1)
+        stroke.center = $0.center
+        $0.bounds = $0.bounds.insetBy(dx: -0.1, dy: -0.1)
         stroke.layer.borderWidth = 0.2
-        stroke.layer.borderColor = UIColor(red: 1, green: 1, blue: 1, alpha: 1).cgColor
-        
-        return view
-    }()
-    
-    private var descriptionLabel: UILabel = {
-        let label = UILabel()
-        label.frame = CGRect(x: 0, y: 0, width: 305, height: 45)
-        label.textColor = UIColor(red: 1, green: 1, blue: 1, alpha: 1)
-        label.font = UIFont(name: "SFProDisplay-Regular", size: 18)
-        label.numberOfLines = 0
-        label.lineBreakMode = .byWordWrapping
-        var paragraphStyle = NSMutableParagraphStyle()
-        paragraphStyle.lineHeightMultiple = 1.02
-        label.attributedText = NSMutableAttributedString(string: "08:00~09:00에 강우 상태가, 18:00에 한때 흐린 상태가 예상됩니다.",
-                                                         attributes: [NSAttributedString.Key.paragraphStyle: paragraphStyle])
-        return label
-    }()
-    
-    private var navigationLine: UIView = {
-        var view = UIView()
-        view.frame = CGRect(x: 0, y: 0, width: UIScreen.main.bounds.width, height: 0)
-        view.alpha = 0.5
+        stroke.layer.borderColor = UIColor(white: 1, alpha: 1).cgColor
+        $0.addSubview(stroke)
+    }
+    private let descriptionLabel = UILabel().then {
+        $0.text = "08:00~09:00에 강우 상태가, 18:00에 한때 흐린 상태가 예상됩니다."
+        $0.frame = CGRect(x: 0, y: 0, width: 305, height: 45)
+        $0.textColor = .white
+        $0.font = UIFont(name: "SFProDisplay-Regular", size: 18)
+        $0.numberOfLines = 0
+        $0.lineBreakMode = .byWordWrapping
+    }
+    private let navigationLine = UIView().then {
+        $0.frame = CGRect(x: 0, y: 0, width: UIScreen.main.bounds.width, height: 0)
+        $0.alpha = 0.5
         
         let stroke = UIView()
-        stroke.bounds = view.bounds.insetBy(dx: -0.1, dy: -0.1)
-        stroke.center = view.center
-        view.addSubview(stroke)
-        view.bounds = view.bounds.insetBy(dx: -0.1, dy: -0.1)
+        stroke.bounds = $0.bounds.insetBy(dx: -0.1, dy: -0.1)
+        stroke.center = $0.center
+        $0.bounds = $0.bounds.insetBy(dx: -0.1, dy: -0.1)
         stroke.layer.borderWidth = 0.2
         stroke.layer.borderColor = UIColor(red: 1, green: 1, blue: 1, alpha: 1).cgColor
-        
-        return view
-    }()
-    
-    private var mapImageView: UIImageView = {
-        let imageView = UIImageView(image: UIImage(named: "map"))
-        return imageView
-    }()
-    
-    private var listButton: UIButton = {
-        let button = UIButton()
-        button.setImage(UIImage(named: "list"), for: .normal)
-        button.addTarget(self, action: #selector(popButton), for: .touchUpInside)
-        return button
-    }()
-    
-    private var pointerImageView: UIImageView = {
-        let imageView = UIImageView(image: UIImage(named: "pointer"))
-        return imageView
-    }()
-    
-    private var dotImageView: UIImageView = {
-        let imageView = UIImageView(image: UIImage(named: "dot"))
-        return imageView
-    }()
-    
-    private var weatherHorizontalScrollView: UIScrollView = {
-        let view = UIScrollView()
-        view.showsHorizontalScrollIndicator = false
-        view.backgroundColor = .clear
-        return view
-    }()
-    
-    private var weatherStackView: UIStackView = {
-        let view = UIStackView()
-        view.axis = .horizontal
-        view.distribution = .fillEqually
-        view.spacing = 22
-        view.backgroundColor = .clear
-        return view
-    }()
+        $0.addSubview(stroke)
+    }
+    private let mapImageView = UIImageView(image: UIImage(named: "map"))
+    private let pointerImageView = UIImageView(image: UIImage(named: "pointer"))
+    private let dotImageView = UIImageView(image: UIImage(named: "dot"))
+    private let listButton = UIButton().then {
+        $0.setImage(UIImage(named: "list"), for: .normal)
+        $0.addTarget(self, action: #selector(popButton), for: .touchUpInside)
+    }
+    private let weatherHorizontalScrollView = UIScrollView().then {
+        $0.showsHorizontalScrollIndicator = false
+        $0.backgroundColor = .clear
+    }
+    private let weatherStackView = UIStackView().then {
+        $0.axis = .horizontal
+        $0.distribution = .fillEqually
+        $0.spacing = 22
+        $0.backgroundColor = .clear
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
         self.setBackground()
+        self.setLayout()
         self.setStackItem()
         
         self.navigationItem.setHidesBackButton(true, animated: true)
@@ -169,111 +112,101 @@ final class WeatherDetailViewController: UIViewController{
     }
     
     private func setBackground() {
-        backgroundImageView.translatesAutoresizingMaskIntoConstraints = false
         self.view.addSubview(backgroundImageView)
-        NSLayoutConstraint.activate([backgroundImageView.topAnchor.constraint(equalTo: self.view.topAnchor),
-                                     backgroundImageView.leadingAnchor.constraint(equalTo: self.view.leadingAnchor),
-                                     backgroundImageView.trailingAnchor.constraint(equalTo: self.view.trailingAnchor),
-                                     backgroundImageView.bottomAnchor.constraint(equalTo: self.view.bottomAnchor)])
-        
-        scrollView.translatesAutoresizingMaskIntoConstraints = false
-        contentView.translatesAutoresizingMaskIntoConstraints = false
+        backgroundImageView.snp.makeConstraints {
+            $0.edges.equalToSuperview()
+        }
         
         self.view.addSubview(scrollView)
         scrollView.addSubview(contentView)
-        
-        NSLayoutConstraint.activate([scrollView.topAnchor.constraint(equalTo: self.view.topAnchor),
-                                     scrollView.bottomAnchor.constraint(equalTo: self.view.bottomAnchor),
-                                     scrollView.leadingAnchor.constraint(equalTo: self.view.leadingAnchor),
-                                     scrollView.trailingAnchor.constraint(equalTo: self.view.trailingAnchor)])
-        
-        NSLayoutConstraint.activate([contentView.topAnchor.constraint(equalTo: scrollView.contentLayoutGuide.topAnchor),
-                                     contentView.bottomAnchor.constraint(equalTo: scrollView.contentLayoutGuide.bottomAnchor),
-                                     contentView.leadingAnchor.constraint(equalTo: scrollView.contentLayoutGuide.leadingAnchor),
-                                     contentView.trailingAnchor.constraint(equalTo: scrollView.contentLayoutGuide.trailingAnchor),
-                                     contentView.heightAnchor.constraint(equalToConstant: 1000)])
-        
-        contentView.widthAnchor.constraint(equalTo: scrollView.widthAnchor).isActive = true
-        
-        self.setLayout()
+        scrollView.snp.makeConstraints {
+            $0.edges.equalToSuperview()
+        }
+        contentView.snp.makeConstraints {
+            $0.edges.equalToSuperview()
+            $0.height.equalTo(1000)
+        }
     }
     
     private func setLayout() {
         [locationLabel, currentTemperatureLabel, currentWeatherLabel, highLowTemperatureLabel].forEach{
-            $0.translatesAutoresizingMaskIntoConstraints = false
             contentView.addSubview($0)
         }
-        
-        NSLayoutConstraint.activate([locationLabel.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 78),
-                                     locationLabel.centerXAnchor.constraint(equalTo: contentView.centerXAnchor)])
-        NSLayoutConstraint.activate([currentTemperatureLabel.topAnchor.constraint(equalTo: locationLabel.topAnchor, constant: 42),
-                                     currentTemperatureLabel.centerXAnchor.constraint(equalTo: contentView.centerXAnchor, constant: -0.5)])
-        NSLayoutConstraint.activate([currentWeatherLabel.topAnchor.constraint(equalTo: locationLabel.topAnchor, constant: 154),
-                                     currentWeatherLabel.centerXAnchor.constraint(equalTo: contentView.centerXAnchor)])
-        NSLayoutConstraint.activate([highLowTemperatureLabel.topAnchor.constraint(equalTo: locationLabel.topAnchor, constant: 188),
-                                     highLowTemperatureLabel.centerXAnchor.constraint(equalTo: contentView.centerXAnchor)])
-        
-        [roundedRectangle].forEach {
-            $0.translatesAutoresizingMaskIntoConstraints = false
-            contentView.addSubview($0)
+        locationLabel.snp.makeConstraints {
+            $0.top.equalToSuperview().inset(78)
+            $0.centerX.equalToSuperview()
+        }
+        currentTemperatureLabel.snp.makeConstraints {
+            $0.top.equalTo(locationLabel.snp.top).inset(42)
+            $0.centerX.equalToSuperview().inset(-0.5)
+        }
+        currentWeatherLabel.snp.makeConstraints {
+            $0.top.equalTo(locationLabel.snp.top).inset(154)
+            $0.centerX.equalToSuperview()
+        }
+        highLowTemperatureLabel.snp.makeConstraints {
+            $0.top.equalTo(locationLabel.snp.top).inset(188)
+            $0.centerX.equalToSuperview()
         }
         
-        NSLayoutConstraint.activate([roundedRectangle.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 334),
-                                     roundedRectangle.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 20),
-                                     roundedRectangle.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -20),
-                                     roundedRectangle.widthAnchor.constraint(equalToConstant: 335),
-                                     roundedRectangle.heightAnchor.constraint(equalToConstant: 212)])
+        contentView.addSubview(roundedRectangle)
+        roundedRectangle.snp.makeConstraints {
+            $0.top.equalToSuperview().inset(334)
+            $0.leading.trailing.equalToSuperview().inset(20)
+            $0.width.equalTo(335)
+            $0.height.equalTo(212)
+        }
         
         [descriptionLabel, lineInRectangle, weatherHorizontalScrollView].forEach {
-            $0.translatesAutoresizingMaskIntoConstraints = false
             roundedRectangle.addSubview($0)
         }
-        
-        NSLayoutConstraint.activate([descriptionLabel.topAnchor.constraint(equalTo: roundedRectangle.topAnchor, constant: 10),
-                                     descriptionLabel.leadingAnchor.constraint(equalTo: roundedRectangle.leadingAnchor, constant: 15),
-                                     descriptionLabel.trailingAnchor.constraint(equalTo: roundedRectangle.trailingAnchor, constant: -15),
-                                     descriptionLabel.widthAnchor.constraint(equalToConstant: 305),
-                                     descriptionLabel.heightAnchor.constraint(equalToConstant: 45)])
-        
-        NSLayoutConstraint.activate([lineInRectangle.topAnchor.constraint(equalTo: roundedRectangle.topAnchor, constant: 66),
-                                     lineInRectangle.leadingAnchor.constraint(equalTo: roundedRectangle.leadingAnchor, constant: 14),
-                                     lineInRectangle.trailingAnchor.constraint(equalTo: roundedRectangle.trailingAnchor, constant: -14),
-                                     lineInRectangle.bottomAnchor.constraint(equalTo: roundedRectangle.bottomAnchor, constant: -146)])
-        
-        NSLayoutConstraint.activate([weatherHorizontalScrollView.topAnchor.constraint(equalTo: roundedRectangle.topAnchor, constant: 80),
-                                     weatherHorizontalScrollView.leadingAnchor.constraint(equalTo: roundedRectangle.leadingAnchor, constant: 10),
-                                     weatherHorizontalScrollView.trailingAnchor.constraint(equalTo: roundedRectangle.trailingAnchor, constant: -10),
-                                     weatherHorizontalScrollView.bottomAnchor.constraint(equalTo: roundedRectangle.bottomAnchor, constant: -10)])
-        
-        weatherStackView.translatesAutoresizingMaskIntoConstraints = false
-        weatherHorizontalScrollView.addSubview(weatherStackView)
-        
-        NSLayoutConstraint.activate([weatherStackView.topAnchor.constraint(equalTo: weatherHorizontalScrollView.contentLayoutGuide.topAnchor),
-                                     weatherStackView.leadingAnchor.constraint(equalTo: weatherHorizontalScrollView.contentLayoutGuide.leadingAnchor),
-                                     weatherStackView.trailingAnchor.constraint(equalTo: weatherHorizontalScrollView.contentLayoutGuide.trailingAnchor),
-                                     weatherStackView.bottomAnchor.constraint(equalTo: weatherHorizontalScrollView.contentLayoutGuide.bottomAnchor),
-                                     weatherStackView.widthAnchor.constraint(equalToConstant: 650)])
-        
-        [navigationLine, mapImageView, listButton, pointerImageView, dotImageView].forEach {
-            $0.translatesAutoresizingMaskIntoConstraints = false
-            contentView.addSubview($0)
+        descriptionLabel.snp.makeConstraints {
+            $0.top.equalToSuperview().inset(10)
+            $0.leading.trailing.equalToSuperview().inset(15)
+            $0.width.equalTo(305)
+            $0.height.equalTo(45)
+        }
+        lineInRectangle.snp.makeConstraints {
+            $0.top.equalToSuperview().inset(66)
+            $0.leading.trailing.equalToSuperview().inset(14)
+        }
+        weatherHorizontalScrollView.snp.makeConstraints {
+            $0.top.equalToSuperview().inset(80)
+            $0.leading.trailing.bottom.equalToSuperview().inset(10)
         }
         
-        NSLayoutConstraint.activate([navigationLine.bottomAnchor.constraint(equalTo: contentView.topAnchor, constant: UIScreen.main.bounds.height-82),
-                                     navigationLine.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
-                                     navigationLine.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
-                                     navigationLine.widthAnchor.constraint(equalToConstant: 375),
-                                     navigationLine.heightAnchor.constraint(equalToConstant: 0)])
-        NSLayoutConstraint.activate([mapImageView.bottomAnchor.constraint(equalTo: contentView.topAnchor, constant: UIScreen.main.bounds.height-34),
-                                     mapImageView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 10)])
-        NSLayoutConstraint.activate([listButton.bottomAnchor.constraint(equalTo: contentView.topAnchor, constant: UIScreen.main.bounds.height-34),
-                                     listButton.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 322)])
-        NSLayoutConstraint.activate([pointerImageView.bottomAnchor.constraint(equalTo: contentView.topAnchor, constant: UIScreen.main.bounds.height-24),
-                                     pointerImageView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 161)])
-        NSLayoutConstraint.activate([dotImageView.bottomAnchor.constraint(equalTo: contentView.topAnchor, constant: UIScreen.main.bounds.height-24),
-                                     dotImageView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 189)])
+        weatherHorizontalScrollView.addSubview(weatherStackView)
+        weatherStackView.snp.makeConstraints{
+            $0.edges.equalToSuperview()
+            $0.width.equalTo(650)
+        }
+        
+        [navigationLine, mapImageView, listButton, pointerImageView, dotImageView].forEach {
+            contentView.addSubview($0)
+        }
+        navigationLine.snp.makeConstraints {
+            $0.bottom.equalTo(contentView.snp.top).inset(UIScreen.main.bounds.height-82)
+            $0.leading.trailing.equalToSuperview()
+        }
+        mapImageView.snp.makeConstraints {
+            $0.bottom.equalTo(contentView.snp.top).inset(UIScreen.main.bounds.height-34)
+            $0.leading.equalToSuperview().inset(10)
+        }
+        listButton.snp.makeConstraints {
+            $0.bottom.equalTo(contentView.snp.top).inset(UIScreen.main.bounds.height-34)
+            $0.leading.equalToSuperview().inset(322)
+        }
+        pointerImageView.snp.makeConstraints {
+            $0.bottom.equalTo(contentView.snp.top).inset(UIScreen.main.bounds.height-44)
+            $0.leading.equalToSuperview().inset(161)
+        }
+        dotImageView.snp.makeConstraints {
+            $0.bottom.equalTo(contentView.snp.top).inset(UIScreen.main.bounds.height-44)
+            $0.leading.equalToSuperview().inset(189)
+        }
     }
 }
+
 extension WeatherDetailViewController {
     private func setStackItem() {
         let stackItemArray = [weatherStackItem(time: "Now", imageName: "cloudy", temperature: "21°"),
@@ -289,10 +222,10 @@ extension WeatherDetailViewController {
                               weatherStackItem(time: "19시", imageName: "rainyandsunny", temperature: "13°")]
         
         for item in stackItemArray {
-            item.translatesAutoresizingMaskIntoConstraints = false
             weatherStackView.addArrangedSubview(item)
-            
-            NSLayoutConstraint.activate([item.widthAnchor.constraint(equalToConstant: 44)])
+            item.snp.makeConstraints {
+                $0.width.equalTo(44)
+            }
         }
     }
 }
