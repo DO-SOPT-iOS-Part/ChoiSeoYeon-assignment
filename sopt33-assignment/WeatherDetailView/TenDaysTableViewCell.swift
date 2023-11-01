@@ -16,6 +16,10 @@ class TenDaysTableViewCell: UITableViewCell {
         $0.textColor = .white
     }
     private let weatherImageView = UIImageView()
+    private let rainyPercentLabel = UILabel().then {
+        $0.textColor = UIColor(red: 0.506, green: 0.812, blue: 0.98, alpha: 1)
+        $0.font = UIFont(name: "SFProText-Semibold", size: 15)
+    }
     private let lowTemperatureLabel = UILabel().then {
         $0.textColor = .white.withAlphaComponent(0.3)
         $0.font = UIFont(name: "SFProText-Medium", size: 22)
@@ -42,7 +46,7 @@ class TenDaysTableViewCell: UITableViewCell {
             $0.height.equalTo(55)
         }
         
-        [dayLabel, weatherImageView, lowTemperatureLabel, highTemperatureLabel, gradeintImageView].forEach {
+        [dayLabel, weatherImageView, rainyPercentLabel, lowTemperatureLabel, highTemperatureLabel, gradeintImageView].forEach {
             self.contentView.addSubview($0)
         }
         dayLabel.snp.makeConstraints {
@@ -52,7 +56,16 @@ class TenDaysTableViewCell: UITableViewCell {
         weatherImageView.snp.makeConstraints {
             $0.leading.equalToSuperview().inset(87)
             $0.centerY.equalToSuperview()
-            $0.width.height.equalTo(25)
+            $0.width.height.equalTo(26)
+        }
+        if rainyPercentLabel.text != nil {
+            weatherImageView.snp.updateConstraints {
+                $0.centerY.equalToSuperview().offset(-7)
+            }
+        }
+        rainyPercentLabel.snp.makeConstraints {
+            $0.top.equalTo(weatherImageView.snp.bottom).offset(0.85)
+            $0.leading.equalToSuperview().inset(84)
         }
         lowTemperatureLabel.snp.makeConstraints {
             $0.leading.equalToSuperview().inset(130)
@@ -71,8 +84,21 @@ class TenDaysTableViewCell: UITableViewCell {
     func bindData(data: TenDaysData) {
         self.dayLabel.text = data.day
         self.weatherImageView.image = UIImage(systemName: data.weatherImage)?.withRenderingMode(.alwaysOriginal)
+        self.rainyPercentLabel.text = data.rainyPercent
         self.lowTemperatureLabel.text = data.lowTemperature
         self.highTemperatureLabel.text = data.highTemperature
         //MARK: gradient값 추후 추가
+        
+        if data.rainyPercent != nil {
+            weatherImageView.snp.updateConstraints {
+                $0.centerY.equalToSuperview().offset(-7)
+            }
+        } else {
+            weatherImageView.snp.updateConstraints {
+                $0.centerY.equalToSuperview()
+            }
+        }
+        
+        self.layoutIfNeeded()
     }
 }
