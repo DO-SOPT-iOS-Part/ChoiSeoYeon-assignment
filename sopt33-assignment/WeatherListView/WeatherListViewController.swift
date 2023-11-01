@@ -13,14 +13,23 @@ final class WeatherListViewController: UIViewController {
     
     private let tableView = UITableView(frame: .zero, style: .plain).then {
         $0.backgroundColor = .black
-        $0.rowHeight = 117
     }
+    
+    private var filteredList: [WeatherCardData] = []
+    
+    private var isSearchActive: Bool = false
     
     override func viewDidLoad() {
         super.viewDidLoad()
         self.setNavigationBar()
         self.setLayout()
         self.setTableViewConfig()
+        
+        self.reload()
+    }
+    
+    private func reload() {
+        self.tableView.reloadData()
     }
     
     private func setNavigationBar() {
@@ -43,6 +52,8 @@ final class WeatherListViewController: UIViewController {
         searchController.searchBar.setImage(UIImage(named: "finder"), for: .search, state: .normal)
         self.navigationItem.searchController = searchController
         self.navigationItem.hidesSearchBarWhenScrolling = false
+        
+        searchController.searchBar.delegate = self
     }
     
     private func setLayout() {
@@ -68,7 +79,12 @@ final class WeatherListViewController: UIViewController {
 extension WeatherListViewController: UITableViewDelegate {}
 extension WeatherListViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return weatherList.count
+        if isSearchActive {
+            return filteredList.count
+        }
+        else {
+            return weatherList.count
+        }
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -79,9 +95,41 @@ extension WeatherListViewController: UITableViewDataSource {
         cell.isUserInteractionEnabled = true
         cell.addGestureRecognizer(tapGesture)
         
-        cell.bindData(data: weatherList[indexPath.row])
+        if isSearchActive {
+            cell.bindData(data: filteredList[indexPath.row])
+        }
+        else {
+            cell.bindData(data: weatherList[indexPath.row])
+        }
+        
         return cell
     }
+}
+
+extension WeatherListViewController: UISearchBarDelegate {
+    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
+        filterItems(with: searchText)
+        self.reload()
+    }
+    
+    func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
+        searchBar.text = nil
+        searchBar.resignFirstResponder() // 키보드 내림
+        filterItems(with: "")
+        self.reload()
+    }
+    
+    private func filterItems(with searchText: String) {
+        if searchText.isEmpty {
+            // 검색어가 비어있으면 모든 항목을 포함
+            isSearchActive = false
+        } else {
+            // 검색어를 기준으로 weatherList 배열을 필터링하여 검색 결과를 filteredList에 저장
+            filteredList = weatherList.filter { $0.location.range(of: searchText, options: .anchored) != nil }
+            isSearchActive = true
+        }
+    }
+    
 }
 
 
