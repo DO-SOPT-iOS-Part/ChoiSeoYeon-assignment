@@ -85,8 +85,6 @@ final class WeatherListViewController: UIViewController {
         detailVC.locationLabel.text = selectedData.location
         detailVC.currentTemperatureLabel.text = selectedData.currentTemperature
         detailVC.currentWeatherLabel.text = selectedData.currentWeather
-//        detailVC.highTemperatureLabel.text = selectedData.highTemperature
-//        detailVC.lowTemperatureLabel.text = selectedData.lowTemperature
         detailVC.highTemperatureText = selectedData.highTemperature
         detailVC.lowTemperatureText = selectedData.lowTemperature
         self.navigationController?.pushViewController(detailVC, animated: true)

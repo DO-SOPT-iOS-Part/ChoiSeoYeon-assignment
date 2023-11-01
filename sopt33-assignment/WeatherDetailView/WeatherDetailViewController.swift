@@ -33,14 +33,14 @@ final class WeatherDetailViewController: UIViewController{
         $0.font = UIFont(name: "SFProText-Regular", size: 24)
         $0.textColor = .white
     }
-
     var highTemperatureText: String?
     var lowTemperatureText: String?
     private lazy var highlowTemperatureLabel = UILabel().then {
         $0.text = "\(highTemperatureText ?? "")  \(lowTemperatureText ?? "")"
-        $0.font = UIFont(name: "SFProDisplay-Medium", size: 20)
+        $0.font = UIFont(name: "SFProText-Medium", size: 20)
         $0.textColor = .white
     }
+    
     private let roundedRectangle = UIView().then {
         $0.frame = CGRect(x: 0, y: 0, width: 335, height: 212)
         $0.layer.backgroundColor = UIColor(white: 1, alpha: 0.03).cgColor
@@ -64,28 +64,37 @@ final class WeatherDetailViewController: UIViewController{
         $0.text = "08:00~09:00에 강우 상태가, 18:00에 한때 흐린 상태가 예상됩니다."
         $0.frame = CGRect(x: 0, y: 0, width: 305, height: 45)
         $0.textColor = .white
-        $0.font = UIFont(name: "SFProDisplay-Regular", size: 18)
+        $0.font = UIFont(name: "SFProText-Regular", size: 18)
         $0.numberOfLines = 0
         $0.lineBreakMode = .byWordWrapping
-    }
-    private let bottomLine = UIView().then {
-        $0.frame = CGRect(x: 0, y: 0, width: UIScreen.main.bounds.width, height: 0)
-        $0.alpha = 0.5
-        
-        let stroke = UIView()
-        stroke.bounds = $0.bounds.insetBy(dx: -0.1, dy: -0.1)
-        stroke.center = $0.center
-        $0.bounds = $0.bounds.insetBy(dx: -0.1, dy: -0.1)
-        stroke.layer.borderWidth = 0.2
-        stroke.layer.borderColor = UIColor(red: 1, green: 1, blue: 1, alpha: 1).cgColor
-        $0.addSubview(stroke)
     }
     private let todayCollectionView = UICollectionView(frame: .zero, collectionViewLayout: UICollectionViewFlowLayout()).then {
         $0.backgroundColor = .clear
         $0.showsHorizontalScrollIndicator = false
     }
-    private let bottomTabbarBox = UIView().then {
+    private let roundedRectangle2 = UIView().then {
+        $0.frame = CGRect(x: 0, y: 0, width: 335, height: 675)
+        $0.layer.backgroundColor = UIColor(white: 1, alpha: 0.03).cgColor
+        $0.layer.cornerRadius = 15
+        $0.layer.borderWidth = 0.5
+        $0.layer.borderColor = UIColor(white: 1, alpha: 0.25).cgColor
+    }
+    private let calendarImageView = UIImageView(image: UIImage(named: "calendar"))
+    private let descriptionLabel2 = UILabel().then {
+        $0.text = "10일간의 일기예보"
+        $0.alpha = 0.3
+        $0.textColor = .white
+        $0.font = UIFont(name: "SFProText-Medium", size: 15)
+    }
+    private let tendaysTableView = UITableView(frame: .zero, style: .plain).then {
         $0.backgroundColor = .clear
+        $0.separatorColor = .white.withAlphaComponent(0.5)
+        $0.separatorStyle = .singleLine
+        $0.separatorInset = UIEdgeInsets(top: 0, left: 15, bottom: 0, right: 25)
+    }
+    
+    private let bottomTabbarBox = UIView().then {
+        $0.layer.backgroundColor = UIColor(red: 0.165, green: 0.188, blue: 0.251, alpha: 1).cgColor
     }
     private let mapImageView = UIImageView(image: UIImage(named: "map"))
     private let pointerImageView = UIImageView(image: UIImage(named: "pointer"))
@@ -94,14 +103,16 @@ final class WeatherDetailViewController: UIViewController{
         $0.setImage(UIImage(named: "list"), for: .normal)
         $0.addTarget(self, action: #selector(popButton), for: .touchUpInside)
     }
-
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         self.setBackground()
         self.setLayout()
         self.setCollectionViewConfig()
         self.setCollectionViewLayout()
-
+        
+        self.setTableViewConfig()
+        
         self.navigationItem.setHidesBackButton(true, animated: true)
     }
     
@@ -117,12 +128,14 @@ final class WeatherDetailViewController: UIViewController{
         
         self.view.addSubview(scrollView)
         scrollView.addSubview(contentView)
+
         scrollView.snp.makeConstraints {
             $0.edges.equalToSuperview()
         }
         contentView.snp.makeConstraints {
             $0.edges.equalToSuperview()
-            $0.height.equalTo(1000)
+            $0.width.equalToSuperview()
+            $0.height.equalTo(1400)
         }
     }
     
@@ -146,7 +159,7 @@ final class WeatherDetailViewController: UIViewController{
             $0.top.equalTo(locationLabel.snp.top).inset(188)
             $0.centerX.equalToSuperview()
         }
-
+        
         contentView.addSubview(roundedRectangle)
         roundedRectangle.snp.makeConstraints {
             $0.top.equalToSuperview().inset(334)
@@ -173,14 +186,31 @@ final class WeatherDetailViewController: UIViewController{
             $0.leading.bottom.equalToSuperview().inset(10)
             $0.trailing.equalToSuperview()
         }
-
-        [bottomLine, bottomTabbarBox].forEach {
-            contentView.addSubview($0)
+        
+        contentView.addSubview(roundedRectangle2)
+        roundedRectangle2.snp.makeConstraints {
+            $0.top.equalTo(roundedRectangle.snp.bottom).offset(20)
+            $0.leading.trailing.equalToSuperview().inset(20)
+            $0.height.equalTo(675)
         }
-        bottomLine.snp.makeConstraints {
-            $0.bottom.equalTo(bottomTabbarBox.snp.top)
-            $0.leading.equalToSuperview()
+        [calendarImageView, descriptionLabel2, tendaysTableView].forEach {
+            roundedRectangle2.addSubview($0)
         }
+        calendarImageView.snp.makeConstraints {
+            $0.top.equalToSuperview().inset(13)
+            $0.leading.equalToSuperview().inset(15)
+        }
+        descriptionLabel2.snp.makeConstraints {
+            $0.top.equalToSuperview().inset(11)
+            $0.leading.equalToSuperview().inset(40)
+        }
+        tendaysTableView.snp.makeConstraints {
+            $0.top.equalToSuperview().inset(38)
+            $0.leading.trailing.equalToSuperview()
+            $0.bottom.equalToSuperview()
+        }
+        
+        contentView.addSubview(bottomTabbarBox)
         bottomTabbarBox.snp.makeConstraints {
             $0.bottom.equalTo(self.view)
             $0.leading.trailing.equalToSuperview()
@@ -223,6 +253,13 @@ final class WeatherDetailViewController: UIViewController{
         flowLayout.minimumInteritemSpacing = 3
         self.todayCollectionView.setCollectionViewLayout(flowLayout, animated: false)
     }
+    
+    private func setTableViewConfig() {
+        self.tendaysTableView.register(TenDaysTableViewCell.self,
+                                       forCellReuseIdentifier: TenDaysTableViewCell.identifier)
+        self.tendaysTableView.delegate = self
+        self.tendaysTableView.dataSource = self
+    }
 }
 
 extension WeatherDetailViewController: UICollectionViewDelegate {}
@@ -236,5 +273,19 @@ extension WeatherDetailViewController: UICollectionViewDataSource {
                                                             for: indexPath) as? TodayCollectionViewCell else {return UICollectionViewCell()}
         item.bindData(data: todayWeatherList[indexPath.row])
         return item
+    }
+}
+
+extension WeatherDetailViewController: UITableViewDelegate {}
+extension WeatherDetailViewController: UITableViewDataSource {
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return tendaysList.count
+    }
+    
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        guard let cell = tableView.dequeueReusableCell(withIdentifier: TenDaysTableViewCell.identifier,
+                                                       for: indexPath) as? TenDaysTableViewCell else {return UITableViewCell()}
+        cell.bindData(data: tendaysList[indexPath.row])
+        return cell
     }
 }
