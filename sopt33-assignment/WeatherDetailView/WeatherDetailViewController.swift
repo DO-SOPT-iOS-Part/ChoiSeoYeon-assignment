@@ -80,6 +80,10 @@ final class WeatherDetailViewController: UIViewController{
         stroke.layer.borderColor = UIColor(red: 1, green: 1, blue: 1, alpha: 1).cgColor
         $0.addSubview(stroke)
     }
+    private let todayCollectionView = UICollectionView(frame: .zero, collectionViewLayout: UICollectionViewFlowLayout()).then {
+        $0.backgroundColor = .clear
+        $0.showsHorizontalScrollIndicator = false
+    }
     private let bottomTabbarBox = UIView().then {
         $0.backgroundColor = .clear
     }
@@ -90,23 +94,14 @@ final class WeatherDetailViewController: UIViewController{
         $0.setImage(UIImage(named: "list"), for: .normal)
         $0.addTarget(self, action: #selector(popButton), for: .touchUpInside)
     }
-    private let weatherHorizontalScrollView = UIScrollView().then {
-        $0.showsHorizontalScrollIndicator = false
-        $0.backgroundColor = .clear
-    }
-    private let weatherStackView = UIStackView().then {
-        $0.axis = .horizontal
-        $0.distribution = .fillEqually
-        $0.spacing = 22
-        $0.backgroundColor = .clear
-    }
-    
+
     override func viewDidLoad() {
         super.viewDidLoad()
         self.setBackground()
         self.setLayout()
-        self.setStackItem()
-        
+        self.setCollectionViewConfig()
+        self.setCollectionViewLayout()
+
         self.navigationItem.setHidesBackButton(true, animated: true)
     }
     
@@ -160,7 +155,7 @@ final class WeatherDetailViewController: UIViewController{
             $0.height.equalTo(212)
         }
         
-        [descriptionLabel, lineInRectangle, weatherHorizontalScrollView].forEach {
+        [descriptionLabel, lineInRectangle, todayCollectionView].forEach {
             roundedRectangle.addSubview($0)
         }
         descriptionLabel.snp.makeConstraints {
@@ -173,14 +168,10 @@ final class WeatherDetailViewController: UIViewController{
             $0.top.equalToSuperview().inset(66)
             $0.leading.trailing.equalToSuperview().inset(14)
         }
-        weatherHorizontalScrollView.snp.makeConstraints {
+        todayCollectionView.snp.makeConstraints {
             $0.top.equalToSuperview().inset(80)
-            $0.leading.trailing.bottom.equalToSuperview().inset(10)
-        }
-        weatherHorizontalScrollView.addSubview(weatherStackView)
-        weatherStackView.snp.makeConstraints{
-            $0.edges.equalToSuperview()
-            $0.width.equalTo(650)
+            $0.leading.bottom.equalToSuperview().inset(10)
+            $0.trailing.equalToSuperview()
         }
 
         [bottomLine, bottomTabbarBox].forEach {
@@ -216,27 +207,34 @@ final class WeatherDetailViewController: UIViewController{
             $0.leading.equalToSuperview().inset(189)
         }
     }
+    
+    private func setCollectionViewConfig() {
+        self.todayCollectionView.register(TodayCollectionViewCell.self,
+                                          forCellWithReuseIdentifier: TodayCollectionViewCell.identifier)
+        self.todayCollectionView.delegate = self
+        self.todayCollectionView.dataSource = self
+    }
+    
+    private func setCollectionViewLayout() {
+        let flowLayout = UICollectionViewFlowLayout()
+        flowLayout.itemSize = CGSize(width: 44 , height: 122)
+        flowLayout.scrollDirection = .horizontal
+        flowLayout.minimumLineSpacing = 22
+        flowLayout.minimumInteritemSpacing = 3
+        self.todayCollectionView.setCollectionViewLayout(flowLayout, animated: false)
+    }
 }
 
-extension WeatherDetailViewController {
-    private func setStackItem() {
-        let stackItemArray = [weatherStackItem(time: "Now", imageName: "cloudy", temperature: "21°"),
-                              weatherStackItem(time: "10시", imageName: "rainyandsunny", temperature: "21°"),
-                              weatherStackItem(time: "11시", imageName: "heavyrainy", temperature: "19°"),
-                              weatherStackItem(time: "12시", imageName: "rainy", temperature: "19°"),
-                              weatherStackItem(time: "13시", imageName: "thunder", temperature: "18°"),
-                              weatherStackItem(time: "14시", imageName: "cloudy", temperature: "18°"),
-                              weatherStackItem(time: "15시", imageName: "rainyandsunny", temperature: "67°"),
-                              weatherStackItem(time: "16시", imageName: "heavyrainy", temperature: "88°"),
-                              weatherStackItem(time: "17시", imageName: "rainy", temperature: "11°"),
-                              weatherStackItem(time: "18시", imageName: "thunder", temperature: "12°"),
-                              weatherStackItem(time: "19시", imageName: "rainyandsunny", temperature: "13°")]
-        
-        for item in stackItemArray {
-            weatherStackView.addArrangedSubview(item)
-            item.snp.makeConstraints {
-                $0.width.equalTo(44)
-            }
-        }
+extension WeatherDetailViewController: UICollectionViewDelegate {}
+extension WeatherDetailViewController: UICollectionViewDataSource {
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        return todayWeatherList.count
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        guard let item = collectionView.dequeueReusableCell(withReuseIdentifier: TodayCollectionViewCell.identifier,
+                                                            for: indexPath) as? TodayCollectionViewCell else {return UICollectionViewCell()}
+        item.bindData(data: todayWeatherList[indexPath.row])
+        return item
     }
 }

@@ -13,10 +13,6 @@ class WeatherCardTableViewCell: UITableViewCell {
     
     private let backgroundImageView = UIImageView().then {
         $0.image = UIImage(named: "weatherlist")
-        
-//        $0.isUserInteractionEnabled = true
-//        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(cardTapped))
-//        $0.addGestureRecognizer(tapGesture)
     }
     private let myLocationLabel = UILabel().then {
         $0.text = "나의 위치"
@@ -55,7 +51,7 @@ class WeatherCardTableViewCell: UITableViewCell {
     
     private func setLayout() {
         self.backgroundColor = .black
-
+        
         self.contentView.addSubview(backgroundImageView)
         backgroundImageView.snp.makeConstraints{
             $0.top.equalToSuperview().offset(5)
@@ -99,7 +95,4 @@ class WeatherCardTableViewCell: UITableViewCell {
         self.todayHighTemperatureLabel.text = data.highTemperature
         self.todayLowTemperatureLabel.text = data.LowTemperature
     }
-    
-    
-    
 }

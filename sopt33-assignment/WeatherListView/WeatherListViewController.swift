@@ -129,7 +129,6 @@ extension WeatherListViewController: UISearchBarDelegate {
             isSearchActive = true
         }
     }
-    
 }
 
 
