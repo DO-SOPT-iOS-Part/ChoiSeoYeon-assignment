@@ -21,23 +21,23 @@ final class WeatherDetailViewController: UIViewController{
         $0.image = UIImage(named: "background")
         $0.contentMode = .scaleAspectFill
     }
-    private let locationLabel = UILabel().then {
-        $0.text = "서울특별시"
+    let locationLabel = UILabel().then {
         $0.font = UIFont(name: "SFProText-Regular", size: 36)
         $0.textColor = .white
     }
-    private let currentTemperatureLabel = UILabel().then {
-        $0.text = "21°"
+    let currentTemperatureLabel = UILabel().then {
         $0.font = UIFont(name: "SFProText-Thin", size: 102)
         $0.textColor = .white
     }
-    private let currentWeatherLabel = UILabel().then {
-        $0.text = "흐림"
+    let currentWeatherLabel = UILabel().then {
         $0.font = UIFont(name: "SFProText-Regular", size: 24)
         $0.textColor = .white
     }
-    private let highLowTemperatureLabel = UILabel().then {
-        $0.text = "최고:29° 최저:15°"
+
+    var highTemperatureText: String?
+    var lowTemperatureText: String?
+    private lazy var highlowTemperatureLabel = UILabel().then {
+        $0.text = "\(highTemperatureText ?? "")  \(lowTemperatureText ?? "")"
         $0.font = UIFont(name: "SFProDisplay-Medium", size: 20)
         $0.textColor = .white
     }
@@ -127,7 +127,7 @@ final class WeatherDetailViewController: UIViewController{
     }
     
     private func setLayout() {
-        [locationLabel, currentTemperatureLabel, currentWeatherLabel, highLowTemperatureLabel].forEach{
+        [locationLabel, currentTemperatureLabel, currentWeatherLabel, highlowTemperatureLabel].forEach{
             contentView.addSubview($0)
         }
         locationLabel.snp.makeConstraints {
@@ -142,11 +142,11 @@ final class WeatherDetailViewController: UIViewController{
             $0.top.equalTo(locationLabel.snp.top).inset(154)
             $0.centerX.equalToSuperview()
         }
-        highLowTemperatureLabel.snp.makeConstraints {
+        highlowTemperatureLabel.snp.makeConstraints {
             $0.top.equalTo(locationLabel.snp.top).inset(188)
             $0.centerX.equalToSuperview()
         }
-        
+
         contentView.addSubview(roundedRectangle)
         roundedRectangle.snp.makeConstraints {
             $0.top.equalToSuperview().inset(334)

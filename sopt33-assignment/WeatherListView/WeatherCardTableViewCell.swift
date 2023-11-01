@@ -93,6 +93,6 @@ class WeatherCardTableViewCell: UITableViewCell {
         self.myweatherLabel.text = data.currentWeather
         self.currentTemperature.text = data.currentTemperature
         self.todayHighTemperatureLabel.text = data.highTemperature
-        self.todayLowTemperatureLabel.text = data.LowTemperature
+        self.todayLowTemperatureLabel.text = data.lowTemperature
     }
 }

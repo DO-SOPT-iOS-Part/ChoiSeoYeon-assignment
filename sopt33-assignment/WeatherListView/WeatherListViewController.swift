@@ -24,7 +24,6 @@ final class WeatherListViewController: UIViewController {
         self.setNavigationBar()
         self.setLayout()
         self.setTableViewConfig()
-        
         self.reload()
     }
     
@@ -70,8 +69,26 @@ final class WeatherListViewController: UIViewController {
         self.tableView.dataSource = self
     }
     
-    @objc func cardTapped() {
+    // 셀 클릭 시 화면 전환 및 데이터 전달
+    @objc func cardTapped(sender: UITapGestureRecognizer) {
+        guard let indexPath = tableView.indexPath(for: sender.view as! UITableViewCell) else { return }
+        let selectedData: WeatherCardData
+        
+        if isSearchActive {
+            selectedData = filteredList[indexPath.row]
+        }
+        else {
+            selectedData = weatherList[indexPath.row]
+        }
+        
         let detailVC = WeatherDetailViewController()
+        detailVC.locationLabel.text = selectedData.location
+        detailVC.currentTemperatureLabel.text = selectedData.currentTemperature
+        detailVC.currentWeatherLabel.text = selectedData.currentWeather
+//        detailVC.highTemperatureLabel.text = selectedData.highTemperature
+//        detailVC.lowTemperatureLabel.text = selectedData.lowTemperature
+        detailVC.highTemperatureText = selectedData.highTemperature
+        detailVC.lowTemperatureText = selectedData.lowTemperature
         self.navigationController?.pushViewController(detailVC, animated: true)
     }
 }
