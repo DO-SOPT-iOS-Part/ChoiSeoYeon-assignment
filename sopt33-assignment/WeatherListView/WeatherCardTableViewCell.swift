@@ -11,9 +11,12 @@ class WeatherCardTableViewCell: UITableViewCell {
     
     static let identifier: String = "WeatherCardTableViewCell"
     
-    private let cardView = UIButton().then {
-        $0.setImage(UIImage(named: "weatherlist"), for: .normal)
-        $0.contentMode = .scaleAspectFill
+    private let backgroundImageView = UIImageView().then {
+        $0.image = UIImage(named: "weatherlist")
+        
+//        $0.isUserInteractionEnabled = true
+//        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(cardTapped))
+//        $0.addGestureRecognizer(tapGesture)
     }
     private let myLocationLabel = UILabel().then {
         $0.text = "나의 위치"
@@ -52,17 +55,16 @@ class WeatherCardTableViewCell: UITableViewCell {
     
     private func setLayout() {
         self.backgroundColor = .black
-        
-        self.contentView.addSubview(cardView)
-        cardView.snp.makeConstraints{
-            $0.top.equalTo(self).offset(5)
-            $0.bottom.equalTo(self).offset(-5)
-            $0.width.equalTo(UIScreen.main.bounds.width-38)
+
+        self.contentView.addSubview(backgroundImageView)
+        backgroundImageView.snp.makeConstraints{
+            $0.top.equalToSuperview().offset(5)
+            $0.bottom.equalToSuperview().offset(-5)
             $0.leading.trailing.equalToSuperview().inset(20)
         }
         
         [myLocationLabel, myLocateLabel, myweatherLabel, currentTemperature, todayHighTemperatureLabel, todayLowTemperatureLabel].forEach {
-            self.cardView.addSubview($0)
+            self.backgroundImageView.addSubview($0)
         }
         myLocationLabel.snp.makeConstraints {
             $0.top.equalToSuperview().inset(10)
@@ -98,9 +100,6 @@ class WeatherCardTableViewCell: UITableViewCell {
         self.todayLowTemperatureLabel.text = data.LowTemperature
     }
     
-    @objc func cardTapped() {
-        let detailVC = WeatherDetailViewController()
-        WeatherListViewController().navigationController?.pushViewController(detailVC, animated: true)
-    }
+    
     
 }

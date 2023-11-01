@@ -58,6 +58,11 @@ final class WeatherListViewController: UIViewController {
         self.tableView.delegate = self
         self.tableView.dataSource = self
     }
+    
+    @objc func cardTapped() {
+        let detailVC = WeatherDetailViewController()
+        self.navigationController?.pushViewController(detailVC, animated: true)
+    }
 }
 
 extension WeatherListViewController: UITableViewDelegate {}
@@ -69,9 +74,13 @@ extension WeatherListViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let cell = tableView.dequeueReusableCell(withIdentifier: WeatherCardTableViewCell.identifier,
                                                        for: indexPath) as? WeatherCardTableViewCell else {return UITableViewCell()}
+        
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(cardTapped))
+        cell.isUserInteractionEnabled = true
+        cell.addGestureRecognizer(tapGesture)
+        
         cell.bindData(data: weatherList[indexPath.row])
         return cell
-        
     }
 }
 
