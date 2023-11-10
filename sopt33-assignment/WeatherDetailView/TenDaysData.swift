@@ -34,6 +34,5 @@ var tendaysList: [TenDaysData] = [
     .init(day: "토", weatherImage: "sun.max.fill", rainyPercent: nil, lowTemperature: "18°", highTemperature: "25°"),
     .init(day: "일", weatherImage: "cloud.drizzle.fill", rainyPercent: "50%", lowTemperature: "13°", highTemperature: "21°"),
     .init(day: "월", weatherImage: "cloud.drizzle.fill", rainyPercent: "50%", lowTemperature: "12°", highTemperature: "19°"),
-    .init(day: "화", weatherImage: "sun.max.fill", rainyPercent: nil, lowTemperature: "18°", highTemperature: "25°"),
     .init(day: "화", weatherImage: "sun.max.fill", rainyPercent: nil, lowTemperature: "18°", highTemperature: "25°")
 ]

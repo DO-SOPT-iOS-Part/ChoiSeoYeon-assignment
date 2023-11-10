@@ -135,7 +135,7 @@ final class WeatherDetailViewController: UIViewController{
         contentView.snp.makeConstraints {
             $0.edges.equalToSuperview()
             $0.width.equalToSuperview()
-            $0.height.equalTo(1400)
+            $0.height.equalTo(1300)
         }
     }
     
@@ -179,7 +179,7 @@ final class WeatherDetailViewController: UIViewController{
         }
         lineInRectangle.snp.makeConstraints {
             $0.top.equalToSuperview().inset(66)
-            $0.leading.trailing.equalToSuperview().inset(14)
+            $0.leading.equalToSuperview().inset(14)
         }
         todayCollectionView.snp.makeConstraints {
             $0.top.equalToSuperview().inset(80)
@@ -191,7 +191,7 @@ final class WeatherDetailViewController: UIViewController{
         roundedRectangle2.snp.makeConstraints {
             $0.top.equalTo(roundedRectangle.snp.bottom).offset(20)
             $0.leading.trailing.equalToSuperview().inset(20)
-            $0.height.equalTo(675)
+            $0.height.equalTo(620)
         }
         [calendarImageView, descriptionLabel2, tendaysTableView].forEach {
             roundedRectangle2.addSubview($0)

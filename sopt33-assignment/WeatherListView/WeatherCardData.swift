@@ -23,13 +23,12 @@ struct WeatherCardData {
     }
 }
 
-// 키보드가 한글이 안먹어서 location값을 영어로 임시설정함
 var weatherList: [WeatherCardData] = [
-    .init(location: "Seoul", currentWeather: "부분적으로 흐림", currentTemperature: "16°", highTemperature: "최고:23°", lowTemperature: "최저:15°"),
-    .init(location: "KwangJinGu", currentWeather: "대체로 흐림", currentTemperature: "14°", highTemperature: "최고:22°", lowTemperature: "최저:14°"),
-    .init(location: "Busan", currentWeather: "청명함", currentTemperature: "17°", highTemperature: "최고:25°", lowTemperature: "최저:11°"),
-    .init(location: "Gangnueng", currentWeather: "대체로 청명함", currentTemperature: "13°", highTemperature: "최고:23°", lowTemperature: "최저:12°"),
-    .init(location: "Tyoko", currentWeather: "청명함", currentTemperature: "15°", highTemperature: "최고:22°", lowTemperature: "최저:13°"),
-    .init(location: "Osaka", currentWeather: "청명함", currentTemperature: "13°", highTemperature: "최고:23°", lowTemperature: "최저:11°"),
-    .init(location: "Kyoto", currentWeather: "겁나 흐림", currentTemperature: "10°", highTemperature: "최고:19°", lowTemperature: "최저:9°")
+    .init(location: "서울특별시", currentWeather: "부분적으로 흐림", currentTemperature: "16°", highTemperature: "최고:23°", lowTemperature: "최저:15°"),
+    .init(location: "광진구", currentWeather: "대체로 흐림", currentTemperature: "14°", highTemperature: "최고:22°", lowTemperature: "최저:14°"),
+    .init(location: "부산시", currentWeather: "청명함", currentTemperature: "17°", highTemperature: "최고:25°", lowTemperature: "최저:11°"),
+    .init(location: "강릉시", currentWeather: "대체로 청명함", currentTemperature: "13°", highTemperature: "최고:23°", lowTemperature: "최저:12°"),
+    .init(location: "도쿄", currentWeather: "청명함", currentTemperature: "15°", highTemperature: "최고:22°", lowTemperature: "최저:13°"),
+    .init(location: "오사카시", currentWeather: "청명함", currentTemperature: "13°", highTemperature: "최고:23°", lowTemperature: "최저:11°"),
+    .init(location: "교토시", currentWeather: "겁나 흐림", currentTemperature: "10°", highTemperature: "최고:19°", lowTemperature: "최저:9°")
 ]
