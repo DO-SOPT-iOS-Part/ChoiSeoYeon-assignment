@@ -16,15 +16,21 @@ final class WeatherListViewController: UIViewController {
     }
     
     private var filteredList: [WeatherCardData] = []
-    
     private var isSearchActive: Bool = false
+    
+    let city = ["daegu", "daejeon", "busan", "sokcho", "jeju"]
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        self.registerWeatherData()
+        self.setUI()
+        self.reload()
+    }
+    
+    private func setUI() {
         self.setNavigationBar()
         self.setLayout()
         self.setTableViewConfig()
-        self.reload()
     }
     
     private func reload() {
@@ -88,6 +94,17 @@ final class WeatherListViewController: UIViewController {
         detailVC.highTemperatureText = selectedData.highTemperature
         detailVC.lowTemperatureText = selectedData.lowTemperature
         self.navigationController?.pushViewController(detailVC, animated: true)
+    }
+    
+    private func registerWeatherData() {
+        for i in 0...city.count-1 {
+            Task {
+                if let result = try await GetWeatherService.shared.PostRegisterData(cityName: city[i]) {
+                    print("\(result.name)")
+                    print("\(result.main)")
+                }
+            }
+        }
     }
 }
 
