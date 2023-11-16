@@ -28,8 +28,6 @@ struct Weather: Codable {
     let icon: String
 }
 
-let city = ["daegu", "daejeon", "busan", "sokcho", "jeju"]
-
 var weatherData = [WeatherDataModel]()
 
 func translateCityNameToKorean(name: String) -> String {
@@ -49,7 +47,6 @@ func makeTimeZoneToTime(timeZone: Int) -> String {
     dateFormatter.timeZone = TimeZone(secondsFromGMT: timeZone)
     dateFormatter.dateFormat = "HH:mm"
     return dateFormatter.string(from: today)
-    
 }
 
 

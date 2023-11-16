@@ -17,8 +17,7 @@ class WeatherPageViewController: UIViewController {
     private var pageControl = UIPageControl().then {
         $0.frame = CGRect(x: 0, y: 0, width: UIScreen.main.bounds.width, height: 82)
         $0.backgroundColor = .systemPurple
-        
-        $0.numberOfPages = weatherList.count
+        $0.numberOfPages = weatherData.count
         $0.currentPage = 0
         $0.isUserInteractionEnabled = true
     }
