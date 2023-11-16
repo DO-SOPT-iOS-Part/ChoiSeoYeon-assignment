@@ -11,13 +11,11 @@ class GetWeatherService {
     // 싱글톤 패턴 생성
     static let shared = GetWeatherService()
     private init() {}
-    
-    //MARK: 개인 API값 숨기기
-    let APIkey = "69f6efb6b2106d07e5892d1f4c2a6342"
-    
+
+    let apiKey = Bundle.main.object(forInfoDictionaryKey: Config.Keys.Plist.apiKey) as? String ?? ""
     func makeRequest(cityName: String) -> URLRequest {
         //MARK: 강제 언래핑 수정하기
-        let url = URL(string: "https://api.openweathermap.org/data/2.5/weather?q=\(cityName)&units=metric&lang=kr&appid=\(APIkey)")!
+        let url = URL(string: "https://api.openweathermap.org/data/2.5/weather?q=\(cityName)&units=metric&lang=kr&appid=\(apiKey)")!
         var request = URLRequest(url: url)
         request.httpMethod = "GET"
         return request
