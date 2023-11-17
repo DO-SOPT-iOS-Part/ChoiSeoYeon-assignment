@@ -21,25 +21,15 @@ final class WeatherListViewController: UIViewController {
     private var isSearchActive: Bool = false
     
     override func viewDidAppear(_ animated: Bool) {
-       
+        
         super.viewDidAppear(animated)
     }
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        self.setUI()
         self.registerWeatherData()
+        self.setUI()
         self.reload()
-    }
-    
-    private func setUI() {
-        self.setNavigationBar()
-        self.setLayout()
-        self.setTableViewConfig()
-    }
-    
-    private func reload() {
-        self.tableView.reloadData()
     }
     
     func registerWeatherData() {
@@ -51,6 +41,16 @@ final class WeatherListViewController: UIViewController {
                 }
             }
         }
+    }
+    
+    private func setUI() {
+        self.setNavigationBar()
+        self.setLayout()
+        self.setTableViewConfig()
+    }
+    
+    private func reload() {
+        self.tableView.reloadData()
     }
     
     private func setNavigationBar() {
@@ -104,16 +104,22 @@ final class WeatherListViewController: UIViewController {
             selectedData = weatherData[indexPath.row]
         }
         
+        // 데이터값 소숫점 버림 적용
         let numberForMatter = NumberFormatter()
         numberForMatter.roundingMode = .floor
         numberForMatter.maximumSignificantDigits = 1
         
+        let temperature = selectedData.main["temp"] ?? 0
+        let maxTemperature = selectedData.main["temp_max"] ?? 0
+        let minTemperature = selectedData.main["temp_min"] ?? 0
+        
         let detailVC = WeatherDetailViewController()
+        
         detailVC.locationLabel.text = translateCityNameToKorean(name: selectedData.name)
-        detailVC.currentTemperatureLabel.text = "\(String(describing: numberForMatter.string(for: selectedData.main["temp"]!)!))°"
+        detailVC.currentTemperatureLabel.text = "\(numberForMatter.string(for: temperature) ?? "")°"
         detailVC.currentWeatherLabel.text = selectedData.weather[0].description
-        detailVC.highTemperatureText = "최고:\(String(describing: numberForMatter.string(for: selectedData.main["temp_max"]!)!))°"
-        detailVC.lowTemperatureText = "최저:\(String(describing: numberForMatter.string(for: selectedData.main["temp_min"]!)!))°"
+        detailVC.highTemperatureText = "최고:\(numberForMatter.string(for: maxTemperature) ?? "")°"
+        detailVC.lowTemperatureText = "최저:\(numberForMatter.string(for: minTemperature) ?? "")°"
         self.navigationController?.pushViewController(detailVC, animated: true)
     }
 }

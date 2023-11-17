@@ -88,18 +88,19 @@ class WeatherCardTableViewCell: UITableViewCell {
     }
 
     func bindData(data: WeatherDataModel) {
-        // 소수점 첫번째 자리까지만 입력될 수 있도록 함
         let numberForMatter = NumberFormatter()
         numberForMatter.roundingMode = .floor
         numberForMatter.maximumSignificantDigits = 1
-        let temp = "\(String(describing: numberForMatter.string(for: data.main["temp"]!)!))°"
-        let temp_min = "최저:\(String(describing: numberForMatter.string(for: data.main["temp_min"]!)!))°"
-        let temp_max = "최고:\(String(describing: numberForMatter.string(for: data.main["temp_max"]!)!))°"
+        
+        let temperature = data.main["temp"] ?? 0
+        let maxTemperature = data.main["temp_max"] ?? 0
+        let minTemperature = data.main["temp_min"] ?? 0
+ 
         self.myLocationLabel.text = translateCityNameToKorean(name: data.name)
         self.myTimeLabel.text = makeTimeZoneToTime(timeZone: data.timezone)
         self.myweatherLabel.text = data.weather[0].description
-        self.currentTemperature.text = temp
-        self.todayLowTemperatureLabel.text = temp_min
-        self.todayHighTemperatureLabel.text = temp_max
+        self.currentTemperature.text = "\(numberForMatter.string(for: temperature) ?? "")°"
+        self.todayLowTemperatureLabel.text = "최저:\(numberForMatter.string(for: minTemperature) ?? "")°"
+        self.todayHighTemperatureLabel.text = "최고:\(numberForMatter.string(for: maxTemperature) ?? "")°"
     }
 }
