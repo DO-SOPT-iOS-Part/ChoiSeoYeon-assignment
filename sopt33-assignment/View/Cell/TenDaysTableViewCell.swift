@@ -28,7 +28,7 @@ class TenDaysTableViewCell: UITableViewCell {
         $0.textColor = .white
         $0.font = UIFont(name: "SFProText-Medium", size: 22)
     }
-    private let gradeintImageView = UIImageView(image: UIImage(named: "gradient1"))
+    private let gradeintImageView = UIImageView()
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
@@ -87,7 +87,7 @@ class TenDaysTableViewCell: UITableViewCell {
         self.rainyPercentLabel.text = data.rainyPercent
         self.lowTemperatureLabel.text = data.lowTemperature
         self.highTemperatureLabel.text = data.highTemperature
-        //MARK: gradient값 추후 추가
+        self.gradeintImageView.image = UIImage(named: data.gradientImage)
         
         if data.rainyPercent != nil {
             weatherImageView.snp.updateConstraints {
