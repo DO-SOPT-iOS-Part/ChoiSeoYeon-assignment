@@ -11,20 +11,42 @@ import Then
 
 final class WeatherListViewController: UIViewController {
     
+    let city = ["daegu", "daejeon", "busan", "sokcho", "jeju"]
+    
     private let tableView = UITableView(frame: .zero, style: .plain).then {
         $0.backgroundColor = .black
     }
     
-    private var filteredList: [WeatherCardData] = []
-    
+    private var filteredList: [WeatherDataModel] = []
     private var isSearchActive: Bool = false
+    
+    override func viewDidAppear(_ animated: Bool) {
+        
+        super.viewDidAppear(animated)
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        self.registerWeatherData()
+        self.setUI()
+        self.reload()
+    }
+    
+    func registerWeatherData() {
+        for i in 0...city.count-1 {
+            Task {
+                if let result = try await GetWeatherService.shared.PostRegisterData(cityName: city[i]) {
+                    weatherData.append(WeatherDataModel(name: result.name, main: result.main, timezone: result.timezone, weather: result.weather))
+                    tableView.reloadData() // 테이블뷰 업데이트 요놈을 빼먹으면 안돼 ....
+                }
+            }
+        }
+    }
+    
+    private func setUI() {
         self.setNavigationBar()
         self.setLayout()
         self.setTableViewConfig()
-        self.reload()
     }
     
     private func reload() {
@@ -60,6 +82,7 @@ final class WeatherListViewController: UIViewController {
         tableView.snp.makeConstraints {
             $0.edges.equalToSuperview()
         }
+        tableView.showsVerticalScrollIndicator = false
     }
     
     private func setTableViewConfig() {
@@ -72,21 +95,31 @@ final class WeatherListViewController: UIViewController {
     // 셀 클릭 시 화면 전환 및 데이터 전달
     @objc func cardTapped(sender: UITapGestureRecognizer) {
         guard let indexPath = tableView.indexPath(for: sender.view as! UITableViewCell) else { return }
-        let selectedData: WeatherCardData
+        let selectedData: WeatherDataModel
         
         if isSearchActive {
             selectedData = filteredList[indexPath.row]
         }
         else {
-            selectedData = weatherList[indexPath.row]
+            selectedData = weatherData[indexPath.row]
         }
         
+        // 데이터값 소숫점 버림 적용
+        let numberForMatter = NumberFormatter()
+        numberForMatter.roundingMode = .floor
+        numberForMatter.maximumSignificantDigits = 1
+        
+        let temperature = selectedData.main["temp"] ?? 0
+        let maxTemperature = selectedData.main["temp_max"] ?? 0
+        let minTemperature = selectedData.main["temp_min"] ?? 0
+        
         let detailVC = WeatherDetailViewController()
-        detailVC.locationLabel.text = selectedData.location
-        detailVC.currentTemperatureLabel.text = selectedData.currentTemperature
-        detailVC.currentWeatherLabel.text = selectedData.currentWeather
-        detailVC.highTemperatureText = selectedData.highTemperature
-        detailVC.lowTemperatureText = selectedData.lowTemperature
+        
+        detailVC.locationLabel.text = translateCityNameToKorean(name: selectedData.name)
+        detailVC.currentTemperatureLabel.text = "\(numberForMatter.string(for: temperature) ?? "")°"
+        detailVC.currentWeatherLabel.text = selectedData.weather[0].description
+        detailVC.highTemperatureText = "최고:\(numberForMatter.string(for: maxTemperature) ?? "")°"
+        detailVC.lowTemperatureText = "최저:\(numberForMatter.string(for: minTemperature) ?? "")°"
         self.navigationController?.pushViewController(detailVC, animated: true)
     }
 }
@@ -98,7 +131,7 @@ extension WeatherListViewController: UITableViewDataSource {
             return filteredList.count
         }
         else {
-            return weatherList.count
+            return weatherData.count
         }
     }
     
@@ -114,7 +147,7 @@ extension WeatherListViewController: UITableViewDataSource {
             cell.bindData(data: filteredList[indexPath.row])
         }
         else {
-            cell.bindData(data: weatherList[indexPath.row])
+            cell.bindData(data: weatherData[indexPath.row])
         }
         
         return cell
@@ -140,7 +173,7 @@ extension WeatherListViewController: UISearchBarDelegate {
             isSearchActive = false
         } else {
             // 검색어를 기준으로 weatherList 배열을 필터링하여 검색 결과를 filteredList에 저장
-            filteredList = weatherList.filter { $0.location.range(of: searchText, options: .anchored) != nil }
+            filteredList = weatherData.filter { $0.name.range(of: searchText, options: .anchored) != nil }
             isSearchActive = true
         }
     }
